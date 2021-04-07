@@ -29,12 +29,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 #if ENA_OPNCLS
 
-void MD_PZone::effectOpen(bool bLightBar, bool bIn)
+void MD_PZone_effectOpen(MD_PZone_t *z,bool bLightBar, bool bIn)
 // Open the current message in/out
 {
   if (bIn)
   {
-    switch (_fsmState)
+    switch (z->_fsmState)
     {
     case INITIALISE:
     case GET_FIRST_CHAR:
@@ -42,88 +42,88 @@ void MD_PZone::effectOpen(bool bLightBar, bool bIn)
       PRINT_STATE("I OPEN");
       FSMPRINT(" - limits R:", _limitRight);
       FSMPRINT(" L:", _limitLeft);
-      _nextPos = 1 + (_limitLeft - _limitRight) / 2;
+      z->_nextPos = 1 + (z->_limitLeft - z->_limitRight) / 2;
       FSMPRINT(" O:", _nextPos);
       if (bLightBar)
       {
-        _MX->setColumn(_limitLeft - _nextPos, LIGHT_BAR);
-        _MX->setColumn(_limitRight + _nextPos, LIGHT_BAR);
+        MD_MAX72XX_setColumn2(z->_MX,z->_limitLeft - z->_nextPos, LIGHT_BAR);
+        MD_MAX72XX_setColumn2(z->_MX,z->_limitRight + z->_nextPos, LIGHT_BAR);
       }
-      _fsmState = PUT_CHAR;
+      z->_fsmState = PUT_CHAR;
       break;
 
     case PUT_CHAR:
       PRINT_STATE("I OPEN");
       FSMPRINT(" - offset ", _nextPos);
-      if (_nextPos < 0)
+      if (z->_nextPos < 0)
       {
-        _fsmState = PAUSE;
+          z->_fsmState = PAUSE;
       }
       else
       {
-        commonPrint();
-        for (int16_t i = 0; i < _nextPos; i++)
+        MD_PZone_commonPrint(z);
+        for (int16_t i = 0; i < z->_nextPos; i++)
         {
-          _MX->setColumn(_limitRight + i, EMPTY_BAR);
-          _MX->setColumn(_limitLeft - i, EMPTY_BAR);
+          MD_MAX72XX_setColumn2(z->_MX,z->_limitRight + i, EMPTY_BAR);
+          MD_MAX72XX_setColumn2(z->_MX,z->_limitLeft - i, EMPTY_BAR);
         }
 
-        _nextPos--;
-        if (bLightBar && (_nextPos >= 0))
+        z->_nextPos--;
+        if (bLightBar && (z->_nextPos >= 0))
         {
-          _MX->setColumn(_limitRight + _nextPos, LIGHT_BAR);
-          _MX->setColumn(_limitLeft - _nextPos, LIGHT_BAR);
+          MD_MAX72XX_setColumn2(z->_MX,z->_limitRight + z->_nextPos, LIGHT_BAR);
+          MD_MAX72XX_setColumn2(z->_MX,z->_limitLeft - z->_nextPos, LIGHT_BAR);
         }
       }
       break;
 
     default:
       PRINT_STATE("I OPEN");
-      _fsmState = PAUSE;
+      z->_fsmState = PAUSE;
     }
   }
   else  // exiting
   {
-    switch (_fsmState)
+    switch (z->_fsmState)
     {
     case PAUSE:
     case GET_FIRST_CHAR:
     case GET_NEXT_CHAR:
       PRINT_STATE("O OPEN");
-      zoneClear();
-      commonPrint();
-      _nextPos = 0;
+      MD_PZone_zoneClear(z);
+      MD_PZone_commonPrint(z);
+      z->_nextPos = 0;
       if (bLightBar)
       {
-        _MX->setColumn(_limitLeft, LIGHT_BAR);
-        _MX->setColumn(_limitRight,LIGHT_BAR);
+        MD_MAX72XX_setColumn2(z->_MX,z->_limitLeft, LIGHT_BAR);
+        MD_MAX72XX_setColumn2(z->_MX,z->_limitRight,LIGHT_BAR);
       }
-      _fsmState = PUT_CHAR;
+      z->_fsmState = PUT_CHAR;
       // fall through
 
     case PUT_CHAR:
       PRINT_STATE("O OPEN");
-      FSMPRINT(" - offset ", _nextPos);
-      if (_nextPos > (_limitLeft - _limitRight) / 2)
+      FSMPRINT(" - offset ", z->_nextPos);
+      if (z->_nextPos > (z->_limitLeft - z->_limitRight) / 2)
       {
-        _fsmState = END;
+          z->_fsmState = END;
       }
       else
       {
-        _MX->setColumn(_limitLeft - _nextPos, EMPTY_BAR);
-        _MX->setColumn(_limitRight + _nextPos, EMPTY_BAR);
-        _nextPos++;
-        if (bLightBar && (_nextPos <= (_limitLeft - _limitRight) / 2))
+        MD_MAX72XX_setColumn2(z->_MX,z->_limitLeft - z->_nextPos, EMPTY_BAR);
+        MD_MAX72XX_setColumn2(z->_MX,z->_limitRight + z->_nextPos, EMPTY_BAR);
+        z->_nextPos++;
+        if (bLightBar && (z->_nextPos <= (z->_limitLeft - z->_limitRight) / 2))
         {
-          _MX->setColumn(_limitLeft - _nextPos, LIGHT_BAR);
-          _MX->setColumn(_limitRight + _nextPos,LIGHT_BAR);
+          MD_MAX72XX_setColumn2(z->_MX,z->_limitLeft - z->_nextPos, LIGHT_BAR);
+          MD_MAX72XX_setColumn2(z->_MX,z->_limitRight + z->_nextPos,LIGHT_BAR);
         }
       }
       break;
 
     default:
       PRINT_STATE("O OPEN");
-      _fsmState = END;
+      z->_fsmState = END;
     }
   }
 }

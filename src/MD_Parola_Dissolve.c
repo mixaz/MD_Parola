@@ -29,49 +29,49 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 #if ENA_MISC
 
-void MD_PZone::effectDissolve(bool bIn)
+void MD_PZone_effectDissolve(MD_PZone_t *z,bool bIn)
 // Dissolve the current message in/out
 {
-  switch (_fsmState)
+  switch (z->_fsmState)
   {
   case INITIALISE:  // bIn = true
   case PAUSE:   // bIn = false
   case GET_FIRST_CHAR:  // first stage dissolve
     PRINT_STATE("IO DISS");
-    for (int16_t i = ZONE_START_COL(_zoneStart); i <= ZONE_END_COL(_zoneEnd); i++)
+    for (int16_t i = ZONE_START_COL(z->_zoneStart); i <= ZONE_END_COL(z->_zoneEnd); i++)
     {
-      uint8_t col = DATA_BAR(_MX->getColumn(i));
+      uint8_t col = DATA_BAR(MD_MAX72XX_getColumn1(z->_MX,i));
 
       col |= (i&1 ? 0x55 : 0xaa); // checkerboard pattern
-      _MX->setColumn(i, DATA_BAR(col));
+      MD_MAX72XX_setColumn2(z->_MX,i, DATA_BAR(col));
     }
-    _fsmState = GET_NEXT_CHAR;
+    z->_fsmState = GET_NEXT_CHAR;
     break;
 
   case GET_NEXT_CHAR:   // second stage dissolve
     PRINT_STATE("IO DISS");
-    zoneClear();
-    if (bIn) commonPrint();
-    for (int16_t i = ZONE_START_COL(_zoneStart); i <= ZONE_END_COL(_zoneEnd); i++)
+    MD_PZone_zoneClear(z);
+    if (bIn) MD_PZone_commonPrint(z);
+    for (int16_t i = ZONE_START_COL(z->_zoneStart); i <= ZONE_END_COL(z->_zoneEnd); i++)
     {
-      uint8_t col = DATA_BAR(_MX->getColumn(i));
+      uint8_t col = DATA_BAR(MD_MAX72XX_getColumn1(z->_MX,i));
 
       col |= (i&1 ? 0xaa : 0x55); // alternate checkerboard pattern
-      _MX->setColumn(i, DATA_BAR(col));
+      MD_MAX72XX_setColumn2(z->_MX,i, DATA_BAR(col));
     }
-    _fsmState = PUT_CHAR;
+    z->_fsmState = PUT_CHAR;
     break;
 
   case PUT_CHAR:
     PRINT_STATE("IO DISS");
-    zoneClear();
-    if (bIn) commonPrint();
-    _fsmState = (bIn ? PAUSE : END);
+    MD_PZone_zoneClear(z);
+    if (bIn) MD_PZone_commonPrint(z);
+    z->_fsmState = (bIn ? PAUSE : END);
     break;
 
   default:
     PRINT_STATE("IO DISS");
-    _fsmState = (bIn ? PAUSE : END);
+    z->_fsmState = (bIn ? PAUSE : END);
   }
 }
 

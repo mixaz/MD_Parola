@@ -1,4 +1,3 @@
-
 #pragma once
 
 /**
@@ -33,9 +32,9 @@
 #endif
 
 // General macros and defines
-#define LIGHT_BAR (_inverted ? 0 : 0xFF)  ///< Turn display column to all LEDs on
-#define EMPTY_BAR (_inverted ? 0xFF : 0)  ///< Turn display column to all LEDs off
-#define DATA_BAR(d) (_inverted ? ~d : d)  ///< Turn display column to specified data
+#define LIGHT_BAR (z->_inverted ? 0 : 0xFF)  ///< Turn display column to all LEDs on
+#define EMPTY_BAR (z->_inverted ? 0xFF : 0)  ///< Turn display column to all LEDs off
+#define DATA_BAR(d) (z->_inverted ? ~d : d)  ///< Turn display column to specified data
 
 // Zone effects masks
 #define ZE_SET(b, mask)   ((b & ~mask) | mask)  ///< clear the bit then put it back in
@@ -45,5 +44,7 @@
 #define ZE_FLIP_UD_MASK 0x01  ///< mask bit 0
 #define ZE_FLIP_LR_MASK 0x02  ///< mask bit 1
 
-#define SFX(s) ((_moveIn && _effectIn == (s)) || (!_moveIn && _effectOut == (s))) ///< Effect is selected if it is the effect for the current motion
+#define SFX(s) ((z->_moveIn && z->_effectIn == (s)) || (!z->_moveIn && z->_effectOut == (s))) ///< Effect is selected if it is the effect for the current motion
 
+void DWT_Init(void);
+uint32_t millis(void);

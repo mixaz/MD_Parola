@@ -29,19 +29,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 #if ENA_MISC
 
-void MD_PZone::effectMesh(bool bIn)
+void MD_PZone_effectMesh(MD_PZone_t *z,bool bIn)
 // Text enters with alternating up/down columns
 {
   bool bUp = true;
 
   if (bIn)  // incoming
   {
-    switch (_fsmState)
+    switch (z->_fsmState)
     {
     case INITIALISE:
       PRINT_STATE("I MESH");
-      _nextPos = 0;
-      _fsmState = PUT_CHAR;
+      z->_nextPos = 0;
+      z->_fsmState = PUT_CHAR;
       // fall through to next state
 
     case GET_FIRST_CHAR:
@@ -50,41 +50,41 @@ void MD_PZone::effectMesh(bool bIn)
     case PAUSE:
       PRINT_STATE("I MESH");
 
-      zoneClear();
-      commonPrint();
+      MD_PZone_zoneClear(z);
+      MD_PZone_commonPrint(z);
 
-      for (uint8_t c = ZONE_START_COL(_zoneStart); c <= ZONE_END_COL(_zoneEnd); c++)
+      for (uint8_t c = ZONE_START_COL(z->_zoneStart); c <= ZONE_END_COL(z->_zoneEnd); c++)
       {
         // scroll the whole display so that the message appears to be animated
         // Note: Directions are reversed because we start with the message in the
         // middle position thru commonPrint() and to see it animated move DOWN we
         // need to scroll it UP, and vice versa.
-        uint8_t col = _MX->getColumn(c);
+        uint8_t col = MD_MAX72XX_getColumn1(z->_MX,c);
 
-        col = (bUp ? col >> (COL_SIZE - 1 - _nextPos) : col << (COL_SIZE - 1 - _nextPos));
-        _MX->setColumn(c, col);
+        col = (bUp ? col >> (COL_SIZE - 1 - z->_nextPos) : col << (COL_SIZE - 1 - z->_nextPos));
+        MD_MAX72XX_setColumn2(z->_MX,c, col);
         bUp = !bUp;
       }
 
       // check if we have finished
-      _nextPos++;
-      if (_nextPos == COL_SIZE) _fsmState = PAUSE;
+      z->_nextPos++;
+      if (z->_nextPos == COL_SIZE) z->_fsmState = PAUSE;
       break;
 
     default:
       PRINT_STATE("I MESH");
-      _fsmState = PAUSE;
+      z->_fsmState = PAUSE;
     }
   }
   else  // exiting
   {
-    switch (_fsmState)
+    switch (z->_fsmState)
     {
     case PAUSE:
     case INITIALISE:
       PRINT_STATE("O MESH");
-      _nextPos = 1;
-      _fsmState = PUT_CHAR;
+      z->_nextPos = 1;
+      z->_fsmState = PUT_CHAR;
       // fall through to next state
 
     case GET_FIRST_CHAR:
@@ -92,23 +92,23 @@ void MD_PZone::effectMesh(bool bIn)
     case PUT_CHAR:
       PRINT_STATE("O MESH");
 
-      for (uint8_t c = ZONE_START_COL(_zoneStart); c <= ZONE_END_COL(_zoneEnd); c++)
+      for (uint8_t c = ZONE_START_COL(z->_zoneStart); c <= ZONE_END_COL(z->_zoneEnd); c++)
       {
-        uint8_t col = _MX->getColumn(c);
+        uint8_t col = MD_MAX72XX_getColumn1(z->_MX,c);
 
-        col = (bUp ? col << _nextPos : col >> _nextPos);
-        _MX->setColumn(c, col);
+        col = (bUp ? col << z->_nextPos : col >> z->_nextPos);
+        MD_MAX72XX_setColumn2(z->_MX,c, col);
         bUp = !bUp;
       }
 
       // check if we have finished
-      _nextPos++;
-      if (_nextPos == COL_SIZE) _fsmState = END;
+      z->_nextPos++;
+      if (z->_nextPos == COL_SIZE) z->_fsmState = END;
       break;
 
     default:
       PRINT_STATE("O MESH");
-      _fsmState = END;
+      z->_fsmState = END;
       break;
     }
   }

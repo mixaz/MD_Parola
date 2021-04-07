@@ -27,43 +27,43 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  * \brief Implements static print effect
  */
 
-void MD_PZone::commonPrint(void)
+void MD_PZone_commonPrint(MD_PZone_t *z)
 {
   int16_t nextPos;
 
   PRINTS("\ncommonPrint");
-  zoneClear();
-  nextPos = _limitLeft;
-  getFirstChar(_charCols);
-  _countCols = 0;
+  MD_PZone_zoneClear(z);
+  nextPos = z->_limitLeft;
+  MD_PZone_getFirstChar(z,&z->_charCols);
+  z->_countCols = 0;
 
-  while (nextPos >= _limitRight)
+  while (nextPos >= z->_limitRight)
   {
     PRINT("\nCountCol=", _countCols);
     PRINT(" CharCol=", _charCols);
-    if (_countCols == _charCols || _charCols == 0)
+    if (z->_countCols == z->_charCols || z->_charCols == 0)
     {
-      getNextChar(_charCols);
-      _countCols = 0;
+      MD_PZone_getNextChar(z,&z->_charCols);
+      z->_countCols = 0;
     }
 
     // now put something on the display
-    if (_charCols != 0)
-      _MX->setColumn(nextPos--, DATA_BAR(_cBuf[_countCols++]));
+    if (z->_charCols != 0)
+      MD_MAX72XX_setColumn2(z->_MX,nextPos--, DATA_BAR(z->_cBuf[z->_countCols++]));
   }
 }
 
-void MD_PZone::effectPrint(bool bIn)
+void MD_PZone_effectPrint(MD_PZone_t *z,bool bIn)
 // Just print the message in the justification selected
 {
   if (bIn)  // incoming
   {
-    commonPrint();
-    _fsmState = PAUSE;
+    MD_PZone_commonPrint(z);
+    z->_fsmState = PAUSE;
   }
   else  //exiting
   {
-    zoneClear();
-    _fsmState = END;
+    MD_PZone_zoneClear(z);
+    z->_fsmState = END;
   }
 }

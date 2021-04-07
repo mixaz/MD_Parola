@@ -29,19 +29,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 #if ENA_WIPE
 
-void MD_PZone::effectWipe(bool bLightBar, bool bIn)
+void MD_PZone_effectWipe(MD_PZone_t *z,bool bLightBar, bool bIn)
 // Wipe the message over with a new one
 // Print up the whole message and then remove the parts we
 // don't need in order to do the animation.
 {
   if (bIn)  // incoming
   {
-    switch (_fsmState)
+    switch (z->_fsmState)
     {
     case INITIALISE:
       PRINT_STATE("I WIPE");
-      setInitialEffectConditions();
-      _fsmState = PUT_CHAR;
+      MD_PZone_setInitialEffectConditions(z);
+      z->_fsmState = PUT_CHAR;
       // fall through to next state
 
     case GET_FIRST_CHAR:
@@ -49,66 +49,66 @@ void MD_PZone::effectWipe(bool bLightBar, bool bIn)
     case PUT_CHAR:
     case PAUSE:
       PRINT_STATE("I WIPE");
-      if (_fsmState == PAUSE)
-        _fsmState = PUT_CHAR;
+      if (z->_fsmState == PAUSE)
+        z->_fsmState = PUT_CHAR;
 
-      commonPrint();
+      MD_PZone_commonPrint(z);
 
       // blank out the part of the display we don't need
       FSMPRINT(" - Clear ", _nextPos);
       FSMPRINT(" to ", _endPos);
       FSMPRINT(" step ", _posOffset);
-      for (int16_t i = _nextPos; i != _endPos + _posOffset; i += _posOffset)
-        _MX->setColumn(i, EMPTY_BAR);
+      for (int16_t i = z->_nextPos; i != z->_endPos + z->_posOffset; i += z->_posOffset)
+        MD_MAX72XX_setColumn2(z->_MX,i, EMPTY_BAR);
 
-      if (bLightBar && (_nextPos != _endPos + _posOffset)) _MX->setColumn(_nextPos, LIGHT_BAR);
+      if (bLightBar && (z->_nextPos != z->_endPos + z->_posOffset)) MD_MAX72XX_setColumn2(z->_MX,z->_nextPos, LIGHT_BAR);
 
       // check if we have finished
-      if (_nextPos == _endPos + _posOffset) _fsmState = PAUSE;
+      if (z->_nextPos == z->_endPos + z->_posOffset) z->_fsmState = PAUSE;
 
-      _nextPos += _posOffset; // for the next time around
+      z->_nextPos += z->_posOffset; // for the next time around
       break;
 
     default:
       PRINT_STATE("I WIPE");
-      _fsmState = PAUSE;
+      z->_fsmState = PAUSE;
     }
   }
   else  // exiting
   {
-    switch (_fsmState)
+    switch (z->_fsmState)
     {
     case PAUSE:
     case INITIALISE:
       PRINT_STATE("O WIPE");
-      setInitialEffectConditions();
-      _fsmState = PUT_CHAR;
+      MD_PZone_setInitialEffectConditions(z);
+      z->_fsmState = PUT_CHAR;
       // fall through to next state
 
     case GET_FIRST_CHAR:
     case GET_NEXT_CHAR:
     case PUT_CHAR:
       PRINT_STATE("O WIPE");
-      commonPrint();
+      MD_PZone_commonPrint(z);
 
       // blank out the part of the display we don't need
       FSMPRINT(" - Clear ", _nextPos);
       FSMPRINT(" to ", _endPos);
       FSMPRINT(" step ", _posOffset);
-      for (int16_t i = _startPos; i != _nextPos + _posOffset; i += _posOffset)
-        _MX->setColumn(i, EMPTY_BAR);
+      for (int16_t i = z->_startPos; i != z->_nextPos + z->_posOffset; i += z->_posOffset)
+        MD_MAX72XX_setColumn2(z->_MX,i, EMPTY_BAR);
 
-      if (bLightBar && (_nextPos != _endPos + _posOffset)) _MX->setColumn(_nextPos, LIGHT_BAR);
+      if (bLightBar && (z->_nextPos != z->_endPos + z->_posOffset)) MD_MAX72XX_setColumn2(z->_MX,z->_nextPos, LIGHT_BAR);
 
       // check if we have finished
-      if (_nextPos == _endPos + _posOffset) _fsmState = END;
+      if (z->_nextPos == z->_endPos + z->_posOffset) z->_fsmState = END;
 
-      _nextPos += _posOffset; // for the next time around
+      z->_nextPos += z->_posOffset; // for the next time around
       break;
 
     default:
       PRINT_STATE("O WIPE");
-      _fsmState = END;
+      z->_fsmState = END;
       break;
     }
   }

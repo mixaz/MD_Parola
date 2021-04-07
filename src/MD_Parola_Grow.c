@@ -29,20 +29,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 #if ENA_GROW
 
-void MD_PZone::effectGrow(bool bUp, bool bIn)
+void MD_PZone_effectGrow(MD_PZone_t *z,bool bUp, bool bIn)
 // Scan the message over with a new one
 // Print up the whole message and then remove the parts we
 // don't need in order to do the animation.
 {
   if (bIn)  // incoming
   {
-    switch (_fsmState)
+    switch (z->_fsmState)
     {
     case INITIALISE:
       PRINT_STATE("I GROW");
-      setInitialEffectConditions();
-      _nextPos = (bUp ? 0xff : 1); // this is the bit mask
-      _fsmState = PUT_CHAR;
+      MD_PZone_setInitialEffectConditions(z);
+      z->_nextPos = (bUp ? 0xff : 1); // this is the bit mask
+      z->_fsmState = PUT_CHAR;
       // fall through to next state
 
     case GET_FIRST_CHAR:
@@ -51,76 +51,76 @@ void MD_PZone::effectGrow(bool bUp, bool bIn)
     case PAUSE:
       PRINT_STATE("I GROW");
 
-      commonPrint();
+      MD_PZone_commonPrint(z);
       // check if we have finished
-      if (_nextPos == (bUp ? 0 : 0xff)) // all bits covered
+      if (z->_nextPos == (bUp ? 0 : 0xff)) // all bits covered
       {
-        _fsmState = PAUSE;
+        z->_fsmState = PAUSE;
         break;
       }
 
       // blank out the part of the display we don't need
       FSMPRINT("Keep bits ", _nextPos);
-      for (int16_t i = _startPos; i != _endPos + _posOffset; i += _posOffset)
+      for (int16_t i = z->_startPos; i != z->_endPos + z->_posOffset; i += z->_posOffset)
       {
-        uint8_t c = DATA_BAR(_MX->getColumn(i)) & (bUp ? ~_nextPos : _nextPos);
+        uint8_t c = DATA_BAR(MD_MAX72XX_getColumn1(z->_MX,i)) & (bUp ? ~z->_nextPos : z->_nextPos);
 
-        _MX->setColumn(i, DATA_BAR(c));
+        MD_MAX72XX_setColumn2(z->_MX,i, DATA_BAR(c));
       }
 
       // for the next time around
       if (bUp)
-        _nextPos >>= 1;
+        z->_nextPos >>= 1;
       else
-        _nextPos = (_nextPos << 1) | 1;
+        z->_nextPos = (z->_nextPos << 1) | 1;
       break;
 
     default:
       PRINT_STATE("I GROW");
-      _fsmState = PAUSE;
+      z->_fsmState = PAUSE;
     }
   }
   else  // exiting
   {
-    switch (_fsmState)
+    switch (z->_fsmState)
     {
     case PAUSE:
     case INITIALISE:
       PRINT_STATE("O GROW");
-      setInitialEffectConditions();
-      _nextPos = (bUp ? 1 : 0xff);  // this is the bit mask
-      _fsmState = PUT_CHAR;
+      MD_PZone_setInitialEffectConditions(z);
+      z->_nextPos = (bUp ? 1 : 0xff);  // this is the bit mask
+      z->_fsmState = PUT_CHAR;
       // fall through to next state
 
     case GET_FIRST_CHAR:
     case GET_NEXT_CHAR:
     case PUT_CHAR:
       PRINT_STATE("O GROW");
-      commonPrint();
+      MD_PZone_commonPrint(z);
 
       // blank out the part of the display we don't need
       FSMPRINT(" Keep bits ", _nextPos);
-      for (int16_t i =_startPos; i != _endPos + _posOffset; i += _posOffset)
+      for (int16_t i =z->_startPos; i != z->_endPos + z->_posOffset; i += z->_posOffset)
       {
-        uint8_t c = DATA_BAR(_MX->getColumn(i)) & (bUp ? ~_nextPos : _nextPos);
+        uint8_t c = DATA_BAR(MD_MAX72XX_getColumn1(z->_MX,i)) & (bUp ? ~z->_nextPos : z->_nextPos);
 
-        _MX->setColumn(i, DATA_BAR(c));
+        MD_MAX72XX_setColumn2(z->_MX,i, DATA_BAR(c));
       }
 
       // check if we have finished
-      if (_nextPos == (bUp ? 0xff : 0x0)) // all bits covered
-        _fsmState = END;
+      if (z->_nextPos == (bUp ? 0xff : 0x0)) // all bits covered
+        z->_fsmState = END;
 
       // for the next time around
       if (bUp)
-        _nextPos = (_nextPos << 1) | 1;
+        z->_nextPos = (z->_nextPos << 1) | 1;
       else
-        _nextPos >>= 1;
+        z->_nextPos >>= 1;
       break;
 
     default:
       PRINT_STATE("O GROW");
-      _fsmState = END;
+      z->_fsmState = END;
       break;
     }
   }

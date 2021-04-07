@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 #if ENA_MISC
 
-void MD_PZone::effectFade(bool bIn)
+void MD_PZone_effectFade(MD_PZone_t *z,bool bIn)
 // Fade the display in and out.
 // If the overall intensity is changed while the animation is running, the
 // intensity at the start of the animation will be restored at the end, overriding
@@ -37,25 +37,25 @@ void MD_PZone::effectFade(bool bIn)
 {
   if (bIn) // incoming
   {
-    switch (_fsmState)
+    switch (z->_fsmState)
     {
     case INITIALISE:
       PRINT_STATE("I FADE");
-      _nextPos = 0;
-      _endPos = getIntensity();
+      z->_nextPos = 0;
+      z->_endPos = MD_PZone_getIntensity(z);
 
-      zoneClear();
+      MD_PZone_zoneClear(z);
 
-      _fsmState = GET_FIRST_CHAR;
+      z->_fsmState = GET_FIRST_CHAR;
       break;
 
     case GET_FIRST_CHAR:
       FSMPRINT(" I:", _nextPos);
       FSMPRINT("/", _endPos);
 
-      setIntensity(_nextPos++);
-      commonPrint();
-      _fsmState = PUT_CHAR;
+      MD_PZone_setIntensity(z,z->_nextPos++);
+      MD_PZone_commonPrint(z);
+      z->_fsmState = PUT_CHAR;
       break;
 
     case GET_NEXT_CHAR:
@@ -66,33 +66,33 @@ void MD_PZone::effectFade(bool bIn)
       FSMPRINT("/", _endPos);
 
       // check if we have finished
-      if (_nextPos > _endPos)
-        _fsmState = PAUSE;
+      if (z->_nextPos > z->_endPos)
+        z->_fsmState = PAUSE;
       else
-        setIntensity(_nextPos++);
+        MD_PZone_setIntensity(z,z->_nextPos++);
       break;
 
     default:
       PRINT_STATE("I FADE");
-      _fsmState = PAUSE;
+      z->_fsmState = PAUSE;
     }
   }
   else  // exiting
   {
-    switch (_fsmState)
+    switch (z->_fsmState)
     {
     case PAUSE:
     case INITIALISE:
       PRINT_STATE("O FADE");
-      _nextPos = _endPos = getIntensity();
+      z->_nextPos = z->_endPos = MD_PZone_getIntensity(z);
 
       FSMPRINT(" I:", _nextPos);
       FSMPRINT("/", _endPos);
 
-      setIntensity(_nextPos);
-      commonPrint();
+      MD_PZone_setIntensity(z,z->_nextPos);
+      MD_PZone_commonPrint(z);
 
-      _fsmState = PUT_CHAR;
+      z->_fsmState = PUT_CHAR;
       break;
 
     case GET_FIRST_CHAR:
@@ -104,19 +104,19 @@ void MD_PZone::effectFade(bool bIn)
       FSMPRINT("/", _endPos);
 
       // check if we have finished
-      if (_nextPos < 0)
+      if (z->_nextPos < 0)
       {
-        setIntensity(_endPos);  // set to original conditions
-        zoneClear();            // display nothing - we are currently at 0
-        _fsmState = END;
+        MD_PZone_setIntensity(z,z->_endPos);  // set to original conditions
+        MD_PZone_zoneClear(z);            // display nothing - we are currently at 0
+        z->_fsmState = END;
       }
       else
-        setIntensity(_nextPos--);
+        MD_PZone_setIntensity(z,z->_nextPos--);
       break;
 
     default:
       PRINT_STATE("O FADE");
-      _fsmState = END;
+      z->_fsmState = END;
       break;
     }
   }

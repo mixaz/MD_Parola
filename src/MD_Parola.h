@@ -1,435 +1,10 @@
-/**
-\mainpage Main Page
-The Parola Library
-------------------
-The Parola library is implemented to work with the MD_MAX2XX library. It
-depends on the MD_MAX72xx library for hardware control and will run on all
-hardware supported by that library. The MD_MAX72XX library can be found
-[here] (http://github.com/MajicDesigns/MAX72xx).
-
-This software library implements functions to simplify the implementation
-of text special effects on the Parola display.
-- Left, right or center text justification in the display field.
-- Text scrolling, text entering and exit effects.
-- Control display parameters and animation speed.
-- Multiple virtual displays (zones) in each string of LED modules.
-- User defined fonts and/or individual characters substitutions.
-- Double height and vertical displays.
-- Support for mixing text and graphics on the same display.
-
-The latest copy of the Parola Software and hardware files can be found
-at the [Parola distribution site] (http://github.com/MajicDesigns/Parola).
-
-![Parola Display with 8 modules connected] (Working_Display.jpg "Working System")
-
-System Components
------------------
-- Hardware - documentation for supported hardware found in the [MD_MAX72xx library] (http://github.com/MajicDesigns/MD_MAX72XX) documentation.
-- \subpage pageSoftware
-- \subpage pageRevHistory
-- \subpage pageCopyright
-- \subpage pageDonation
-
-Parola A-to-Z Blog Articles
----------------------------
-- [RAM Requirements] (https://arduinoplusplus.wordpress.com/2017/08/27/parola-a-to-z-ram-requirements/)
-- [Adapting for Different Hardware] (https://arduinoplusplus.wordpress.com/2017/04/14/parola-a-to-z-adapting-for-different-hardware/)
-- [Defining Fonts] (https://arduinoplusplus.wordpress.com/2016/11/08/parola-fonts-a-to-z-defining-fonts/)
-- [Managing Fonts] (https://arduinoplusplus.wordpress.com/2016/11/13/parola-fonts-a-to-z-managing-fonts/)
-- [UTF-8 Characters] (https://arduinoplusplus.wordpress.com/2020/03/21/parola-a-to-z-handling-non-ascii-characters-utf-8/})
-- [Text Animation] (https://arduinoplusplus.wordpress.com/2017/02/10/parola-a-to-z-text-animation/)
-- [Managing Animation] (https://arduinoplusplus.wordpress.com/2017/03/02/parola-a-to-z-managing-animation/)
-- [Double Height Displays] (https://arduinoplusplus.wordpress.com/2017/03/15/parola-a-to-z-double-height-displays/)
-- [Multi Zone Displays] (https://arduinoplusplus.wordpress.com/2017/04/18/parola-a-to-z-multi-zone-displays/)
-- [Vertical Displays] (https://arduinoplusplus.wordpress.com/2017/07/22/parola-a-to-z-vertical-displays/)
-- [Mixing Text and Graphics] (https://arduinoplusplus.wordpress.com/2018/03/29/parola-a-to-z-mixing-text-and-graphics/)
-- [Sprite Text Effects] (https://arduinoplusplus.wordpress.com/2018/04/19/parola-a-to-z-sprite-text-effects/)
-- [Optimizing Flash Memory] (https://arduinoplusplus.wordpress.com/2018/09/23/parola-a-to-z-optimizing-flash-memory/)
-
-\page pageDonation Support the Library
-If you like and use this library please consider making a small donation using [PayPal](https://paypal.me/MajicDesigns/4USD)
-
-\page pageRevHistory Revision History
-Mar 2021 - version 3.5.6
-- Added TG_Combo, TG_Coord and TG_Zones examples
-- Deleted Test_TG example
-- Fixed ENA_* no longer working (compiler changes)
-- Deleted revision history prior to v2.0.0
-
-Dec 2020 - version 3.5.5
-- Fixed erratic zone scrolling behavior in introduced with changes to 3.5.3
-- Added README.md to examples folder
-
-Oct 2020 - version 3.5.4
-- Fixed typo in HelloWorld example
-
-Oct 2020 - version 3.5.3
-- Fixed behavior of SCROLL_UP, DOWN, UP_LEFT, UP_RIGHT, DOWN_LEFT, DOWN_RIGHT for inverted display
-
-Aug 2020 - version 3.5.2
-- Fixed ambiguous overloading setSpeed(uint8_t zone, uint16_t spd) and setSpeed(uint16_t spdIn, uint16_t spdOut)
-
-Aug 2020 - version 3.5.1
-- Fixed non-functional setIntensity()
-
-Aug 2020 - version 3.5.0
-- setSpeed() now allows setting independent IN and OUT speed
-- Added getZone() method
-- Added Animation_2Speed example
-- Workaround for issue #56 (https://github.com/MajicDesigns/MD_Parola/issues/56) built into library 
-- Maintenance release for new (more picky) IDE compiler settings
-
-Aug 2020 - version 3.4.0
-- Updated parts of documentation
-- Exposed getTextColumns() as public
-
-Oct 2019 - version 3.3.0
-- Reverted back to dynamic zone allocation removed in v2.6.6. Tested 22 zones seems ok. 
-  STATIC_ZONES defined value will immediately switch back to static zones.
-
-Aug 2019 - version 3.2.0
-- Changed to use 16 bit character code
-- Checked all examples for clean compile with current version
-
-Jun 2019 - version 3.1.1
-- Use const char* parameter instead of char* parameter.
-- Some compiler warnings fixed.
-- Uninitialized variables fixed.
-
-Dec 2018 - version 3.1.0
-- Fixed issues caused by inter char spacing fix in v3.0.2.
-
-Dec 2018 - version 3.0.2
-- Fixed another compile error with ESP8266.
-- Added Double_Scoreboard example.
-- Stopped inter char spacing with zero length character
-
-Jul 2018 - version 3.0.1
-- Added getFont() method.
-- Cleaned up double height examples relying on old USE_*_HW defines.
-
-Jun 2018 - version 3.0.0
-- Minor corrections to previous version examples and keyword.txt.
-- Added help text on sprite animations and minor doc updates.
-- Added Sprites_Simple example.
-- Adapted for changes to the MD_MAX72XX library.
-
-Apr 2018 - version 2.7.4
-- Fixed bug with ESP8266 compilation.
-
-Apr 2018 - version 2.7.3
-- Reworked sprite effects to enable user sprites as more sustainable in long run.
-- Removed all built in sprites from previous version.
-- Added Sprites example.
-
-Apr 2018 - version 2.7.2
-- Fixed bug with last text column persisting for PA_SCAN_HORIZ and PA_SCAN_HORIZX effect.
-- Added sprite based text effects
-
-Mar 2018 - version 2.7.1
-- Adjusted Scrolling_Menu example for changes to MD_Menu library.
-- Added graphics methods to support text + graphics displays
-- Added text & graphics example Test_TG
-
-Dec 2017 - version 2.6.6
-- Created MAX_ZONES constant to allow static zones array. Interim measure until resolution
-  of the errors (?) caused when dynamically allocating the _Z array.
-- Cleaned up most compiler warnings.
-- Reworked Parola_Test example
-
-Nov 2017 - version 2.6.5
-- Fixed RANDOM effect locking issue
-- Added Parola_Bluetooth example
-- Added Double_Height_Russian example
-- Added Scrolling_Menu example
-- Added Scrolling_Vertical example
-- Added SCAN_HORIZX/SCAN_VERTX text effects
-- Fixed bug with WIPE, SCAN and GROW when using 1 module only
-- Removed hard coded internal font buffer size
-- Changed examples - replaced MD_KeySwitch with new MD_UISwitch library
-
-Apr 2017 - version 2.6.4
-- Added Parola_UFT-8_Display example for double multi-byte character handling
-- Fixed bug: single blank column in SCROLL_LEFT with PA_LEFT
-- Changed Scrolling example to parametrize more options
-- Added RANDOM text effect
-
-Feb 2017 - version 2.6.3
-- Full review of double height functionality, mods as required
-- Added Double_Height_Test example
-- Cleaned up some example files
-
-Jan 2017 - version 2.6.2
-- Added shutdown() method to enable low power mode
-- Corrected alignment offset problems in low level functions
-
-Jan 2017 - version 2.6.1
-- Added ESP8266 example
-- Corrected keywords.txt file and main header file
-- Cleaned up looping logic in Double_Height examples
-- Corrected bug when double height PA_SCROLL_RIGHT
-
-Dec 2016 - version 2.6
-- Prefaced all Parola enumerated types with PA_ as some clash with other libraries
-- Edited main library core routines to allow scrolling in double height mode
-- Eliminated trailing char separator from displayed string
-- Adjusted some animations to allow for changes to core utility functions
-- Changed Double_Height_v2 example to allow for Generic and Parola modules
-- Fixed font definitions for font based examples
-- Added Arduino Library Print Class extension for easy printing
-
-Nov 2016 - version 2.5
-- Added ambulance example
-- Updated branding to MD_ diamond
-- Added README.md file
-
-Jan 2016 - version 2.4
-- Added dynamic zone example
-- Added synchZoneStart() method to allow zones start times to be synchronized
-- Added double height character example by Arek00
-- Modified all examples to conditionally include <SPI.h>
-- Added double height character example (v2) using Font file created by MD_MAX72xx font builder
-- Added double height clock example
-- Added HelloWorld example - simplest working code
-- Added FADE animation
-- Adjusted documentation structure
-- Added preprocessor defines ENA_* for granular selection of animations (memory saving)
-
-Aug 2015 - version 2.3
-- Added set/getScrollSpacing() methods and associated Scrolling_Spacing example
-- Added set/getZoneEffect with FLIP_LR and FLIP_UD, with associated Zone_Mirror example
-- Added MESH animation
-- Fixed minor bugs and documentation
-
-April 2015 - version 2.2
-- Added Scrolling_ML example
-- Added Zone_Mesg example
-- Overloaded displayClear() for single zone clear
-- Fixed bug in SLICE effect when text was too long for display
-
-February 2015 - version 2.1
-- Fixed small animation problems with SLICE and SCAN_VERT
-- Fixed PROGMEM error compiling with IDE version 1.5.7
-
-March 2014 - version 2.0
-- Mods to accommodate revised font handling in MD_MAX72xx library
- + Users can now provide a user defined font PROGMEM data table
- + User code can provide individual character override for equivalent font character
-- Additional animations
- + SCAN_HORIZ, SCAN_VERT
- + GROW_UP, GROW_DOWN
- + SCROLL_UP_LEFT, SCROLL_UP_RIGHT, SCROLL_DOWN_LEFT, SCROLL_DOWN_RIGHT
-- Implemented Zoned scrolling
- + Multiple independent zoned scrolling areas in one display.
- + Each zone has all character attributes (font, alignment, speed, pause, etc).
-- textEffect_t and textAlign_t taken out of the class definition. Requires legacy code mods.
-- Backward compatible with library version 1.x code.
-
-\page pageCopyright Copyright
-Copyright (C) 2013-2021 Marco Colli. All rights reserved.
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
-
-\page pageSoftware Parola Library
-The Library
------------
-The Parola library is implemented using the MD_MAX72xx library for hardware
-control. The library implements functions to simplify the implementation
-of text special effects on the LED matrix.
-- Text left, right or center justification in the display
-- Text scrolling, appearance and disappearance effects
-- Control display parameters and animation speed
-- Support for hardware SPI interface
-- Multiple virtual displays (zones) in each string of LED modules
-- User defined fonts and/or individual characters substitutions
-
-### External Dependencies
-- Parola uses the MD_MAX72xx library for hardware level control primitives.
-The latest copy of this library can be found
-[here] (http://github.com/MajicDesigns/MAX72xx).
-
-___
-
-Display Zones
--------------
-A matrix display can be treated as a single contiguous set of modules or it can be
-split into multiple 'virtual' displays (zones). Prior to version 2.0 of the library,
-each display was effectively a single zone.
-
-A zone is a contiguous subset of one or more display modules (LED matrices) that has all
-the attributes of a display - animation, speed, font, spacing, etc. This allows complex
-displays to be created. For example, one part can show relatively static text while a
-different one has animation and movement.
-
-For backward compatibility, all the methods from version 1 remain. If the new library
-is compiled with older user source code, the library defaults to using a single zone
-for the whole display. Zone-aware functions have an added parameter to specify the zone
-to which the method invocation applies. Methods invoked without specifying a zone (such
-as set*()) usually have their effect applied to all zones.
-
-### More Information
-- [Parola A to Z - Multi Zone Displays] (https://arduinoplusplus.wordpress.com/2017/04/18/parola-a-to-z-multi-zone-displays/)
-- [Parola A to Z - Double Height Displays] (https://arduinoplusplus.wordpress.com/2017/03/15/parola-a-to-z-double-height-displays/)
-
-___
-
-Fonts
------
-The standard MD_MAX72xx library font can be substituted with a user font definition conforming
-to the font encoding rules in the MD_MAX72XX documentation. New fonts can be designed with the
-the MD_MAX72xx font builder.
-
-Each zone can have its own substituted font. The default font can be reselected for the zone by
-specifying a nullptr font table pointer.
-
-### More Information
-- [Parola A to Z - Defining Fonts] (https://arduinoplusplus.wordpress.com/2016/11/08/parola-fonts-a-to-z-defining-fonts/)
-- [Parola A to Z - Managing Fonts] (https://arduinoplusplus.wordpress.com/2016/11/13/parola-fonts-a-to-z-managing-fonts/)
-- [Parola A to Z - Optimizing Flash Memory] (https://arduinoplusplus.wordpress.com/2018/09/23/parola-a-to-z-optimizing-flash-memory/)
-
-___
-
-User Characters
----------------
-Individual characters can be substituted for user character definitions. These can be added and
-deleted to individual zones as required.
-
-The character data is the same format as a single character from the font definition file,
-and is held in a local lookup table that is parsed before loading the defined font character.
-If a character is specified with a code the same as an existing character, the existing data
-will be substituted for the new data.
-
-ASCII 0 character ('\0') cannot be substituted as this denotes the end of string character
-for C++ and cannot be used in an actual string.
-
-The library only retains a pointer to the user data definition, so the data must remain in scope.
-Also, any changes to the data storage in the calling program will be reflected by the library the
-next time the character is used.
-
-### More Information
-- [Parola A to Z - Defining Fonts] (https://arduinoplusplus.wordpress.com/2016/11/08/parola-fonts-a-to-z-defining-fonts/)
-- [Parola A to Z - Managing Fonts] (https://arduinoplusplus.wordpress.com/2016/11/13/parola-fonts-a-to-z-managing-fonts/)
-- [PArola A to Z - Handling non-ASCII (UTF-8) Characters] (https://arduinoplusplus.wordpress.com/2020/03/21/parola-a-to-z-handling-non-ascii-characters-utf-8/)
-
-___
-
-Sprite Text Effect
-------------------
-The PA_SPRITE text effect requires additional information, as it extends the functionality
-of the library to include fully customizable, user defined, animated bitmaps to wipe text
-on and off the LED matrix display.
-
-Each frame is defined by a sequence of numbers that encode the columns of the bitmap. The
-least significant bit is at the top of the bitmap. If the sprite has a front and rear, the
-bitmap should be defined for the sprite moving to the right. The library will mirror reverse
-the image when it moves left. The sprites are essentially defined in the same way as the
-character font and the same tools can be used to define the data for the sprite bitmap.
-
-A sprite has at least one frame. If more than one frame is required, a similar definition is
-created for each frame of the animation, and a data table constructed defining the animated
-sprite. To ensure smooth animations, remember that once the last frame is reached, it will loop
-back to the first, so avoid discontinuities between the two ends of the data table.
-
-The library is given the sprite definition setSpriteData() method and the text effect is
-specified using the effect id PA_SPRITE.
-
-### More Information
-- [Parola A to Z - Sprite Text Effects] (https://arduinoplusplus.wordpress.com/2018/04/19/parola-a-to-z-sprite-text-effects/)
-
-___
-
-Conditional Compilation Switches
---------------------------------
-The library allows the run time code to be tailored through the use of compilation
-switches. The compile options start with ENA_ and are documented in the section
-related to the main header file MD_Parola.h.
-
-_NOTE_: Compile switches must be edited in the library header file. Arduino header file
-'mashing' during compilation makes the setting of these switches from user code
-completely unreliable.
-
-### More Information
-- [Parola A to Z - Optimizing Flash Memory] (https://arduinoplusplus.wordpress.com/2018/09/23/parola-a-to-z-optimizing-flash-memory/)
-
-___
-
-Implementing New Text Effects
------------------------------
-Each of the selected text effects is implemented as a function. This makes it easy to add new
-effects:
-- Choose a name for the effect and add it to the textEffect_t enumerated type.
-- Clone an existing method and modify it according to the guidelines below.
-- Add the function prototype for the new effect to the MD_PZone class definition in the MD_Parola.h file.
-- Modify the zoneAnimate() method in MD_PZone.cpp to invoke the new method.
-
-###New Text Effects
-The effects functions are implemented as finite state machines that are called with the
-frequency set by the setSpeed() method. The class variable _fsmState holds the state from
-the last invocation of an effect method.
-
-An effect method can work in one of 2 ways:
-- *Additive*: where the animation frames are incrementally built up to the initial display.
-With this method, the function will need to use the getFirstChar() and getNextChar() methods
-to build up the displayed text, column by column.
-- *Subtractive*: where the final displayed text is placed in the buffer using the commonPrint()
-method and the elements that are not visible at that stage of the animation are removed.
-
-Which algorithm is used depends on the type animation and what is convenient for the coder.
-Examples of both are found in the supplied library text effects.
-
-Each effect method is implemented in 2 parts. One part implements the text move IN to the display
-(method parameter bIn is true) and the other when the text is moving OUT of the display (bIn false).
-Because the IN and OUT effects can be different for a display cycle, the method must not assume
-that the first part was ever called. The first phase should always end with the text in its
-display position (depending on the alignment specified) and the second phase should assume the text
-is in that position when called. Text position parameters are held in the class variables _limitLeft and
-_limitRight found in the library header file.
-
-The first phase starts with _fsmState set to INITIALISE and ends when the state is set to PAUSE
-within the effect method. The second phase starts with a PAUSE state and ends when the state is
-set to END by the method.  Aside from the INITIALISE state (set by the displayReset() method),
-all other state changes are under the control of the effect functions. Delays between frames and
-the pause between IN and OUT are handled outside of the effect method.
-
-### More Information
-- [Parola A to Z - Text Animation] (https://arduinoplusplus.wordpress.com/2017/02/10/parola-a-to-z-text-animation/)
-- [Parola A to Z - Managing Animation] (https://arduinoplusplus.wordpress.com/2017/03/02/parola-a-to-z-managing-animation/)
-
-___
-
-Coding Tips
------------
-+ The MD_MAX72XX library sets the origin for the LED matrix at the top right of the display. This
-makes the leftmost text column a higher column number that the far right column. Sometimes this
-is not intuitive when coding and is worth remembering. Rows are numbered from top to bottom, 0-7.
-
-+ Ensure that a new effect is tested in combination with other effects to make sure that transitions
-are smooth and the IN and OUT effects combine well. Common errors are misaligned entry compared to
-exit, with causes a small jump in the text position when the effects are combined.
-
-+ Display update times grow proportionally with the number of modules in a display, so some timing
-parameters may need to adapt. Hardware SPI runs approximately 10 times faster and the delay
-increase is not appreciable with up to 12 modules. For the arbitrary pin outs, using
-shiftout(), a 6 module chain updates in approximately 14ms on an Uno, while a 12 module display
-takes around 25ms. Most of the time taken is to physically update the display, as animating frames
-takes about 1-2ms to update in the MD_MAX72XX display buffers.
-*/
 #pragma once
 
-#include <Arduino.h>
-#include <MD_MAX72xx.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stddef.h>
+
+#include "MD_MAX72xx.h"
 /**
  * \file
  * \brief Main header file for the MD_Parola library
@@ -468,7 +43,7 @@ takes about 1-2ms to update in the MD_MAX72XX display buffers.
 
 // Miscellaneous defines
 #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))  ///< Generic macro for obtaining number of elements of an array
-#define STATIC_ZONES 0    ///< Developer testing flag for quickly flipping between static/dynamic zones
+#define STATIC_ZONES 1    ///< Developer testing flag for quickly flipping between static/dynamic zones
 
 #if STATIC_ZONES
 #ifndef MAX_ZONES
@@ -480,7 +55,7 @@ takes about 1-2ms to update in the MD_MAX72XX display buffers.
 #define ZONE_START_COL(m) ((m) * COL_SIZE)    ///< The first column of the first zone module
 #define ZONE_END_COL(m)   ((((m) + 1) * COL_SIZE) - 1)///< The last column of the last zone module
 
-class MD_Parola;
+//class MD_Parola;
 
 /**
 * Text alignment enumerated type specification.
@@ -564,19 +139,148 @@ enum zoneEffect_t
   PA_FLIP_LR, ///< Flip the zone Left to Right (effectively mirrored). Does not work with textEffect_t types SLICE, SCROLL_LEFT, SCROLL_RIGHT
 };
 
+/***
+ *  Finite State machine states enumerated type.
+*/
+enum fsmState_t
+{
+    INITIALISE,     ///< Initialize all variables
+    GET_FIRST_CHAR, ///< Get the first character
+    GET_NEXT_CHAR,  ///< Get the next character
+    PUT_CHAR,       ///< Placing a character
+    PUT_FILLER,     ///< Placing filler (blank) columns
+    PAUSE,          ///< Pausing between animations
+    END             ///< Display cycle has completed
+};
+
+/***
+  *  Structure for list of user defined characters substitutions.
+*/
+typedef struct charDef_t
+{
+    uint16_t   code;  ///< the ASCII code for the user defined character
+    uint8_t   *data;  ///< user supplied data
+    struct charDef_t *next;  ///< next in the list
+} charDef_t;
+
 /**
  * Zone object for the Parola library.
  * This class contains the text to be displayed and all the attributes for the zone.
  */
-class MD_PZone
-{
-public:
-  /**
+typedef struct {
+    MD_MAX72XX_t  *_MX;   ///< Pointer to parent's MD_MAX72xx object passed in at begin()
+
+    // Time and speed controlling data and methods
+    bool      _suspend;     // don't do anything
+    uint32_t  _lastRunTime; // the millis() value for when the animation was last run
+    uint16_t  _tickTimeIn;  // the time between IN animations in milliseconds
+    uint16_t  _tickTimeOut; // the time between OUT animations in milliseconds
+    uint16_t  _pauseTime;   // time to pause the animation between 'in' and 'out'
+
+    // Display control data and methods
+    enum fsmState_t      _fsmState;          // fsm state for all FSMs used to display text
+    uint16_t        _textLen;           // length of current text in columns
+    int16_t         _limitLeft;         // leftmost limit for the current display effect
+    int16_t         _limitRight;        // rightmost limit for the current display effect
+    bool            _limitOverflow;     // true if the text will overflow the display
+    enum textPosition_t  _textAlignment;     // current text alignment
+    enum textEffect_t    _effectIn;          // the effect for text entering the display
+    enum textEffect_t    _effectOut;         // the effect for text exiting the display
+    bool            _moveIn;            // animation is moving IN when true, OUT when false
+    bool            _inverted;          // true if the display needs to be inverted
+    uint16_t        _scrollDistance;    // the space in columns between the end of one message and the start of the next
+    uint8_t         _zoneEffect;        // bit mapped zone effects
+    uint8_t         _intensity;         // display intensity
+    bool            _animationAdvanced; // true is animation advanced inthe last animation call
+
+    // Variables used in the effects routines. These can be used by the functions as needed.
+    uint8_t   _zoneStart;   // First zone module number
+    uint8_t   _zoneEnd;     // Last zone module number
+    int16_t   _nextPos;     // Next position for animation. Can be used in several different ways depending on the function.
+    int8_t    _posOffset;   // Looping increment depends on the direction of the scan for animation
+    int16_t   _startPos;    // Start position for the text LED
+    int16_t   _endPos;      // End limit for the text LED.
+
+    // Character buffer handling data and methods
+    const uint8_t *_pText;             // pointer to text buffer from user call
+    const uint8_t *_pCurChar;          // the current character being processed in the text
+    bool       _endOfText;             // true when the end of the text string has been reached.
+
+    // Font character handling data and methods
+    struct charDef_t *_userChars;  // the root of the list of user defined characters
+    uint8_t   _cBufSize;    // allocated size of the array for loading character font (cBuf)
+    uint8_t   *_cBuf;       // buffer for loading character font - allocated when font is set
+    uint8_t   _charSpacing; // spacing in columns between characters
+    uint8_t   _charCols;    // number of columns for this character
+    int16_t   _countCols;   // count of number of columns already shown
+    fontType_t  *_fontDef;  // font for this zone
+
+    /// Sprite management
+#if ENA_SPRITE
+    uint8_t *_spriteInData, *_spriteOutData;
+    uint8_t _spriteInWidth, _spriteOutWidth;
+    uint8_t _spriteInFrames, _spriteOutFrames;
+#endif
+
+} MD_PZone_t;
+
+void      MD_PZone_setInitialConditions(MD_PZone_t *z);       // set up initial conditions for an effect
+bool      MD_PZone_calcTextLimits(MD_PZone_t *z,const uint8_t *p); // calculate the right and left limits for the text
+
+void MD_PZone_setInitialEffectConditions(MD_PZone_t *z); // set the initial conditions for loops in the FSM
+bool MD_PZone_getFirstChar(MD_PZone_t *z,uint8_t *len);   // put the first Text char into the char buffer
+bool MD_PZone_getNextChar(MD_PZone_t *z,uint8_t *len);    // put the next Text char into the char buffer
+void      MD_PZone_allocateFontBuffer(MD_PZone_t *z); // allocate _cBuf based on the size of the largest font characters
+uint8_t   MD_PZone_findChar(MD_PZone_t *z,uint16_t code, uint8_t size, uint8_t *cBuf); // look for user defined character
+uint8_t   MD_PZone_makeChar(MD_PZone_t *z,uint16_t c, bool addBlank);  // load a character bitmap and add in trailing _charSpacing blanks if req'd
+void      MD_PZone_reverseBuf(MD_PZone_t *z,uint8_t *p, uint8_t size); // reverse the elements of the buffer
+void      MD_PZone_invertBuf(MD_PZone_t *z,uint8_t *p, uint8_t size);  // invert the elements of the buffer
+
+void      MD_PZone_moveTextPointer(MD_PZone_t *z);  // move the text pointer depending on direction of buffer scan
+
+// Debugging aid
+const char *MD_PZone_state2string(MD_PZone_t *z,enum fsmState_t s);
+
+// Effect functions
+void  MD_PZone_commonPrint(MD_PZone_t *z);
+void  MD_PZone_effectPrint(MD_PZone_t *z,bool bIn);
+void  MD_PZone_effectVScroll(MD_PZone_t *z,bool bUp, bool bIn);
+void  MD_PZone_effectHScroll(MD_PZone_t *z,bool bLeft, bool bIn);
+#if ENA_MISC
+    void  MD_PZone_effectSlice(MD_PZone_t *z,bool bIn);
+    void  MD_PZone_effectMesh(MD_PZone_t *z,bool bIn);
+    void  MD_PZone_effectFade(MD_PZone_t *z,bool bIn);
+    void  MD_PZone_effectBlinds(MD_PZone_t *z,bool bIn);
+    void  MD_PZone_effectDissolve(MD_PZone_t *z,bool bIn);
+    void  MD_PZone_effectRandom(MD_PZone_t *z,bool bIn);
+#endif // ENA_MISC
+#if ENA_SPRITE
+    void  MD_PZone_effectSprite(MD_PZone_t *z,bool bIn, uint8_t id);
+#endif // ENA_SPRITE
+#if ENA_WIPE
+    void  MD_PZone_effectWipe(MD_PZone_t *z,bool bLightBar, bool bIn);
+#endif // ENA_WIPE
+#if ENA_OPNCLS
+    void  MD_PZone_effectOpen(MD_PZone_t *z,bool bLightBar, bool bIn);
+    void  MD_PZone_effectClose(MD_PZone_t *z,bool bLightBar, bool bIn);
+#endif // ENA_OPNCLS
+#if ENA_SCR_DIA
+    void  MD_PZone_effectDiag(MD_PZone_t *z,bool bUp, bool bLeft, bool bIn);
+#endif // ENA_SCR_DIA
+#if ENA_SCAN
+    void  MD_PZone_effectHScan(MD_PZone_t *z,bool bIn, bool bBlank);
+    void  MD_PZone_effectVScan(MD_PZone_t *z,bool bIn, bool bBlank);
+#endif // ENA_SCAN
+#if ENA_GROW
+    void  MD_PZone_effectGrow(MD_PZone_t *z,bool bUp, bool bIn);
+#endif // ENA_GROW
+
+/**
    * Class constructor.
    *
    * Instantiate a new instance of the class.
    */
-  MD_PZone(void);
+  void MD_PZone_constructor(MD_PZone_t *z);
 
   /**
    * Initialize the object.
@@ -586,7 +290,7 @@ public:
    *
    * \param p pointer to the parent's MD_MAX72xx object.
    */
-  void begin(MD_MAX72XX *p);
+  void MD_PZone_begin(MD_PZone_t *z,MD_MAX72XX_t *p);
 
   /**
    * Class Destructor.
@@ -594,7 +298,7 @@ public:
    * Release allocated memory and does the necessary to clean up once the object is
    * no longer required.
    */
-  ~MD_PZone(void);
+  void MD_PZone_destructor(MD_PZone_t *z);
 
   //--------------------------------------------------------------
   /** \name Methods for core object control.
@@ -608,7 +312,7 @@ public:
    *
    * \return bool true if the zone animation has completed, false otherwise.
    */
-  bool zoneAnimate(void);
+  bool MD_PZone_zoneAnimate(MD_PZone_t *z);
 
   /**
    * Get the completion status.
@@ -619,7 +323,7 @@ public:
    *
    * \return bool true if the zone animation is completed
    */
-  bool getStatus(void) { return (_fsmState == END); }
+  inline bool MD_PZone_getStatus(MD_PZone_t *z) { return (z->_fsmState == END); }
 
   /**
    * Get the start and end parameters for a zone.
@@ -629,7 +333,7 @@ public:
    * \param zStart  value for the start module number placed here [0..numZones-1].
    * \param zEnd  value for the end module number placed here [0..numZones-1].
    */
-  inline void getZone(uint8_t &zStart, uint8_t &zEnd) { zStart = _zoneStart; zEnd = _zoneEnd; }
+  inline void MD_PZone_getZone(MD_PZone_t *z,uint8_t *zStart, uint8_t *zEnd) { *zStart = z->_zoneStart; *zEnd = z->_zoneEnd; }
 
   /**
   * Check if animation frame has advanced.
@@ -639,7 +343,7 @@ public:
   *
   * \return True if the animation frame advanced in any of the display zones.
   */
-  bool isAnimationAdvanced(void) { return(_animationAdvanced); }
+  inline bool MD_PZone_isAnimationAdvanced(MD_PZone_t *z) { return(z->_animationAdvanced); }
 
   /**
    * Clear the zone.
@@ -648,7 +352,7 @@ public:
    *
    * \return No return value.
    */
-  void zoneClear(void) { _MX->clear(_zoneStart, _zoneEnd); if (_inverted) _MX->transform(_zoneStart, _zoneEnd, MD_MAX72XX::TINV); }
+  void MD_PZone_zoneClear(MD_PZone_t *z);
 
   /**
    * Reset the current zone animation to restart.
@@ -657,7 +361,7 @@ public:
    *
    * \return No return value.
    */
-  inline void zoneReset(void) { _fsmState = INITIALISE; }
+  inline void MD_PZone_zoneReset(MD_PZone_t *z) { z->_fsmState = INITIALISE; }
 
   /**
   * Shutdown or resume zone hardware.
@@ -667,7 +371,7 @@ public:
   * \param b  boolean value to shutdown (true) or resume (false).
   * \return No return value.
   */
-  void zoneShutdown(bool b) { _MX->control(_zoneStart, _zoneEnd, MD_MAX72XX::SHUTDOWN, b ? MD_MAX72XX::ON : MD_MAX72XX::OFF); }
+  inline void MD_PZone_zoneShutdown(MD_PZone_t *z,bool b) { MD_MAX72XX_control2(z->_MX,z->_zoneStart, z->_zoneEnd, SHUTDOWN, b ? ON : OFF); }
 
   /**
    * Suspend or resume zone updates.
@@ -677,7 +381,7 @@ public:
    * \param b boolean value to suspend (true) or resume (false).
    * \return No return value.
    */
-  inline void zoneSuspend(bool b) { _suspend = b; }
+  inline void MD_PZone_zoneSuspend(MD_PZone_t *z,bool b) { z->_suspend = b; }
 
   /**
    * Set the start and end parameters for a zone.
@@ -687,7 +391,7 @@ public:
    * \param zStart  the first module number for the zone [0..numZones-1].
    * \param zEnd  the last module number for the zone [0..numZones-1].
    */
-  inline void setZone(uint8_t zStart, uint8_t zEnd) { _zoneStart = zStart; _zoneEnd = zEnd; }
+  inline void MD_PZone_setZone(MD_PZone_t *z,uint8_t zStart, uint8_t zEnd) { z->_zoneStart = zStart; z->_zoneEnd = zEnd; }
 
   /** @} */
   //--------------------------------------------------------------
@@ -700,7 +404,7 @@ public:
    *
    * \return the current setting for the space between characters in columns.
    */
-  inline uint8_t getCharSpacing(void) { return _charSpacing; }
+  inline uint8_t MD_PZone_getCharSpacing(MD_PZone_t *z) { return z->_charSpacing; }
 
   /**
   * Get the zone brightness.
@@ -709,7 +413,7 @@ public:
   *
   * \return The intensity setting.
   */
-  inline uint8_t getIntensity() { return _intensity; }
+  inline uint8_t MD_PZone_getIntensity(MD_PZone_t *z) { return z->_intensity; }
 
   /**
    * Get the zone current invert state.
@@ -718,7 +422,7 @@ public:
    *
    * \return the inverted boolean value.
    */
-  inline bool getInvert(void) { return _inverted; }
+  inline bool MD_PZone_getInvert(MD_PZone_t *z) { return z->_inverted; }
 
   /**
    * Get the zone pause time.
@@ -727,7 +431,7 @@ public:
    *
    * \return the pause value in milliseconds.
    */
-  inline uint16_t getPause(void) { return _pauseTime; }
+  inline uint16_t MD_PZone_getPause(MD_PZone_t *z) { return z->_pauseTime; }
 
   /**
      * Get the horizontal Scroll spacing.
@@ -736,9 +440,18 @@ public:
      *
      * \return the space between message in columns.
      */
-  inline uint16_t getScrollSpacing(void) { return _scrollDistance; }
+  inline uint16_t MD_PZone_getScrollSpacing(MD_PZone_t *z) { return z->_scrollDistance; }
 
-  /**
+/**
+ * Get the zone animation IN speed.
+ *
+ * See the setSpeed() method.
+ *
+ * \return the speed value.
+ */
+inline uint16_t MD_PZone_getSpeedIn(MD_PZone_t *z) { return z->_tickTimeIn; }
+
+/**
    * Get the zone animation speed.
    *
    * See the setSpeed() method.
@@ -747,16 +460,7 @@ public:
    *
    * \return the IN speed value.
    */
-  inline uint16_t getSpeed(void) { return getSpeedIn(); }
-
-  /**
-   * Get the zone animation IN speed.
-   *
-   * See the setSpeed() method.
-   *
-   * \return the speed value.
-   */
-  inline uint16_t getSpeedIn(void) { return _tickTimeIn; }
+  inline uint16_t MD_PZone_getSpeed(MD_PZone_t *z) { return MD_PZone_getSpeedIn(z); }
 
   /**
    * Get the zone animation OUT speed.
@@ -765,7 +469,7 @@ public:
    *
    * \return the speed value.
    */
-  inline uint16_t getSpeedOut(void) { return _tickTimeOut; }
+  inline uint16_t MD_PZone_getSpeedOut(MD_PZone_t *z) { return z->_tickTimeOut; }
   
   /**
   * Get the zone animation start time.
@@ -774,14 +478,14 @@ public:
   *
   * \return the internal time reference.
   */
-  inline uint32_t getSynchTime(void) { return _lastRunTime; }
+  inline uint32_t MD_PZone_getSynchTime(MD_PZone_t *z) { return z->_lastRunTime; }
 
   /**
    * Get the current text alignment specification.
    *
    * \return the current text alignment setting
    */
-  inline textPosition_t getTextAlignment(void) { return _textAlignment; }
+  inline enum textPosition_t MD_PZone_getTextAlignment(MD_PZone_t *z) { return z->_textAlignment; }
 
   /**
    *  Get the width of text in columns
@@ -792,7 +496,7 @@ public:
    * \param p   pointer to a text string
    * \return the width of the string in display columns
    */
-   uint16_t getTextWidth(const uint8_t* p);
+   uint16_t MD_PZone_getTextWidth(MD_PZone_t *z,const uint8_t* p);
 
   /**
    * Get the value of specified display effect.
@@ -803,7 +507,7 @@ public:
    * \param ze  the required text alignment.
    * \return true if the value is set, false otherwise.
    */
-  boolean getZoneEffect(zoneEffect_t ze);
+  boolean MD_PZone_getZoneEffect(MD_PZone_t *z,enum zoneEffect_t ze);
 
   /**
    * Set the zone inter-character spacing in columns.
@@ -813,7 +517,7 @@ public:
    * \param cs  space between characters in columns.
    * \return No return value.
    */
-  inline void setCharSpacing(uint8_t cs) { _charSpacing = cs; allocateFontBuffer(); }
+  inline void MD_PZone_setCharSpacing(MD_PZone_t *z,uint8_t cs) { z->_charSpacing = cs; MD_PZone_allocateFontBuffer(z); }
 
   /**
    * Set the zone brightness.
@@ -823,7 +527,8 @@ public:
    * \param intensity the intensity to set the display (0-15).
    * \return No return value.
    */
-  inline void setIntensity(uint8_t intensity) { _intensity = intensity; _MX->control(_zoneStart, _zoneEnd, MD_MAX72XX::INTENSITY, _intensity); }
+  void MD_PZone_setIntensity(MD_PZone_t *z,uint8_t intensity);
+//  inline void setIntensity(uint8_t intensity) { _intensity = intensity; _MX->control(_zoneStart, _zoneEnd, MD_MAX72XX::INTENSITY, _intensity); }
 
   /**
    * Invert the zone display.
@@ -833,7 +538,7 @@ public:
    * \param invert  true for inverted display, false for normal display
    * \return No return value.
    */
-  inline void setInvert(uint8_t invert) { _inverted = invert; }
+  inline void MD_PZone_setInvert(MD_PZone_t *z,uint8_t invert) { z->_inverted = invert; }
 
   /**
    * Set the pause between ENTER and EXIT animations for this zone.
@@ -845,7 +550,7 @@ public:
    * \param pause the time, in milliseconds, between animations.
    * \return No return value.
    */
-  inline void setPause(uint16_t pause) { _pauseTime = pause; }
+  inline void MD_PZone_setPause(MD_PZone_t *z,uint16_t pause) { z->_pauseTime = pause; }
 
   /**
    * Set the horizontal scrolling distance between messages.
@@ -858,9 +563,23 @@ public:
    * \param space the spacing, in columns, between messages; zero for default behaviour..
    * \return No return value.
    */
-  inline void setScrollSpacing(uint16_t space) { _scrollDistance = space; }
+  inline void MD_PZone_setScrollSpacing(MD_PZone_t *z,uint16_t space) { z->_scrollDistance = space; }
 
-  /**
+/**
+ * Set separate IN and OUT zone animation frame speed.
+ *
+ * The speed of the display is the 'tick' time between animation frames. The lower this time
+ * the faster the animation; set it to zero to run as fast as possible.
+ *
+ * This method will set both the IN and OUT animations separately to the specified speed.
+ *
+ * \param speedIn the time, in milliseconds, between IN animation frames.
+ * \param speedOut the time, in milliseconds, between OUT animation frames.
+ * \return No return value.
+ */
+inline void MD_PZone_setSpeedInOut(MD_PZone_t *z,uint16_t speedIn, uint16_t speedOut) { z->_tickTimeIn = speedIn; z->_tickTimeOut = speedOut; }
+
+/**
    * Set the zone animation frame speed.
    *
    * The speed of the display is the 'tick' time between animation frames. The lower this time
@@ -871,21 +590,7 @@ public:
    * \param speed the time, in milliseconds, between animation frames.
    * \return No return value.
    */
-  inline void setSpeed(uint16_t speed) { setSpeedInOut(speed, speed); }
-
-  /**
-   * Set separate IN and OUT zone animation frame speed.
-   *
-   * The speed of the display is the 'tick' time between animation frames. The lower this time
-   * the faster the animation; set it to zero to run as fast as possible.
-   *
-   * This method will set both the IN and OUT animations separately to the specified speed.
-   *
-   * \param speedIn the time, in milliseconds, between IN animation frames.
-   * \param speedOut the time, in milliseconds, between OUT animation frames.
-   * \return No return value.
-   */
-  inline void setSpeedInOut(uint16_t speedIn, uint16_t speedOut) { _tickTimeIn = speedIn; _tickTimeOut = speedOut; }
+  inline void MD_PZone_setSpeed(MD_PZone_t *z,uint16_t speed) { MD_PZone_setSpeedInOut(z,speed, speed); }
 
 #if ENA_SPRITE
   /**
@@ -902,7 +607,7 @@ public:
   * \param outFrames the number of frames for the sprite.
   * \return No return value.
   */
-  void setSpriteData(const uint8_t *inData,  uint8_t inWidth,  uint8_t inFrames,
+  void MD_PZone_setSpriteData(MD_PZone_t *z,const uint8_t *inData,  uint8_t inWidth,  uint8_t inFrames,
                      const uint8_t *outData, uint8_t outWidth, uint8_t outFrames);
 #endif
 
@@ -919,7 +624,7 @@ public:
   * \param zt the required start time.
   * \return No return value.
   */
-  inline void setSynchTime(uint32_t zt) { _lastRunTime = zt; }
+  inline void MD_PZone_setSynchTime(MD_PZone_t *z,uint32_t zt) { z->_lastRunTime = zt; }
 
   /**
    * Set the text alignment within the zone.
@@ -929,7 +634,7 @@ public:
    * \param ta  the required text alignment.
    * \return No return value.
    */
-  inline void setTextAlignment(textPosition_t ta) { _textAlignment = ta; }
+  inline void MD_PZone_setTextAlignment(MD_PZone_t *z,enum textPosition_t ta) { z->_textAlignment = ta; }
 
   /**
    * Set the pointer to the text buffer for this zone.
@@ -940,7 +645,7 @@ public:
    * \param pb  pointer to the text buffer to be used.
    * \return No return value.
    */
-  inline void setTextBuffer(const char *pb) { _pText = (const uint8_t *)pb; }
+  inline void MD_PZone_setTextBuffer(MD_PZone_t *z,const char *pb) { z->_pText = (const uint8_t *)pb; }
 
   /**
    * Set the entry and exit text effects for the zone.
@@ -951,7 +656,7 @@ public:
    * \param effectOut the exit effect, one of the textEffect_t enumerated values.
    * \return No return value.
    */
-  inline void setTextEffect(textEffect_t effectIn, textEffect_t effectOut) { _effectIn = (effectIn == PA_NO_EFFECT ? PA_PRINT : effectIn), _effectOut = effectOut; }
+  inline void MD_PZone_setTextEffect(MD_PZone_t *z,enum textEffect_t effectIn, enum textEffect_t effectOut) { z->_effectIn = (effectIn == PA_NO_EFFECT ? PA_PRINT : effectIn), z->_effectOut = effectOut; }
 
   /**
    * Set the zone display effect.
@@ -964,7 +669,7 @@ public:
    * \param ze  the required text alignment.
    * \return No return value.
    */
-  void setZoneEffect(boolean b, zoneEffect_t ze);
+  void MD_PZone_setZoneEffect(MD_PZone_t *z,boolean b, enum zoneEffect_t ze);
 
   /** @} */
 
@@ -989,7 +694,7 @@ public:
    * \param data  pointer to the character data.
    * \return true of the character was inserted in the substitution list.
    */
-  bool addChar(uint16_t code, uint8_t *data);
+  bool MD_PZone_addChar(MD_PZone_t *z,uint16_t code, uint8_t *data);
 
   /**
    * Delete a user defined character to the replacement list.
@@ -1001,7 +706,7 @@ public:
    * \param code  ASCII code for the character data.
    * \return true of the character was found in the substitution list.
    */
-  bool delChar(uint16_t code);
+  bool MD_PZone_delChar(MD_PZone_t *z,uint16_t code);
 
   /**
    * Get the display font.
@@ -1010,7 +715,7 @@ public:
    *
    * \return Pointer to the font definition used.
    */
-  inline MD_MAX72XX::fontType_t* getZoneFont(void) { return _fontDef; };
+  inline fontType_t* MD_PZone_getZoneFont(MD_PZone_t *z) { return z->_fontDef; };
 
   /**
    * Set the display font.
@@ -1020,7 +725,7 @@ public:
    * \param fontDef Pointer to the font definition to be used.
    * \return No return value.
    */
-  void setZoneFont(MD_MAX72XX::fontType_t *fontDef) { _fontDef = fontDef; _MX->setFont(_fontDef); allocateFontBuffer(); }
+  inline void MD_PZone_setZoneFont(MD_PZone_t *z,fontType_t *fontDef) { z->_fontDef = fontDef; MD_MAX72XX_setFont(z->_MX,z->_fontDef); MD_PZone_allocateFontBuffer(z); }
 
   /** @} */
 
@@ -1039,7 +744,7 @@ public:
   * \param endColumn the by-reference parameter that will hold the return value for the end column.
   * \return The start and end columns in the by-reference parameters.
   */
-  void getZoneExtent(uint16_t &startColumn, uint16_t &endColumn) { startColumn = ZONE_START_COL(_zoneStart); endColumn = ZONE_END_COL(_zoneEnd); }
+  inline void MD_PZone_getZoneExtent(MD_PZone_t *z,uint16_t *startColumn, uint16_t *endColumn) { *startColumn = ZONE_START_COL(z->_zoneStart); *endColumn = ZONE_END_COL(z->_zoneEnd); }
 
   /**
   * Get the start and end column numbers for the text displayed.
@@ -1051,150 +756,27 @@ public:
   * \param endColumn the by-reference parameter that will hold the return value for the end column.
   * \return The start and end columns in the by-reference parameters.
   */
-  void getTextExtent(uint16_t &startColumn, uint16_t &endColumn) { startColumn = _limitLeft; endColumn = _limitRight; }
+  inline void MD_PZone_getTextExtent(MD_PZone_t *z,uint16_t *startColumn, uint16_t *endColumn) { *startColumn = z->_limitLeft; *endColumn = z->_limitRight; }
 
   /** @} */
 #endif
-
-private:
-   /***
-    *  Finite State machine states enumerated type.
-  */
-  enum fsmState_t
-  {
-    INITIALISE,     ///< Initialize all variables
-    GET_FIRST_CHAR, ///< Get the first character
-    GET_NEXT_CHAR,  ///< Get the next character
-    PUT_CHAR,       ///< Placing a character
-    PUT_FILLER,     ///< Placing filler (blank) columns
-    PAUSE,          ///< Pausing between animations
-    END             ///< Display cycle has completed
-  };
-
-  /***
-    *  Structure for list of user defined characters substitutions.
-  */
-  struct charDef_t
-  {
-    uint16_t   code;  ///< the ASCII code for the user defined character
-    uint8_t   *data;  ///< user supplied data
-    charDef_t *next;  ///< next in the list
-  };
-
-  MD_MAX72XX  *_MX;   ///< Pointer to parent's MD_MAX72xx object passed in at begin()
-
-  // Time and speed controlling data and methods
-  bool      _suspend;     // don't do anything
-  uint32_t  _lastRunTime; // the millis() value for when the animation was last run
-  uint16_t  _tickTimeIn;  // the time between IN animations in milliseconds
-  uint16_t  _tickTimeOut; // the time between OUT animations in milliseconds
-  uint16_t  _pauseTime;   // time to pause the animation between 'in' and 'out'
-
-  // Display control data and methods
-  fsmState_t      _fsmState;          // fsm state for all FSMs used to display text
-  uint16_t        _textLen;           // length of current text in columns
-  int16_t         _limitLeft;         // leftmost limit for the current display effect
-  int16_t         _limitRight;        // rightmost limit for the current display effect
-  bool            _limitOverflow;     // true if the text will overflow the display
-  textPosition_t  _textAlignment;     // current text alignment
-  textEffect_t    _effectIn;          // the effect for text entering the display
-  textEffect_t    _effectOut;         // the effect for text exiting the display
-  bool            _moveIn;            // animation is moving IN when true, OUT when false
-  bool            _inverted;          // true if the display needs to be inverted
-  uint16_t        _scrollDistance;    // the space in columns between the end of one message and the start of the next
-  uint8_t         _zoneEffect;        // bit mapped zone effects
-  uint8_t         _intensity;         // display intensity
-  bool            _animationAdvanced; // true is animation advanced inthe last animation call
-
-  void      setInitialConditions(void);       // set up initial conditions for an effect
-  bool      calcTextLimits(const uint8_t *p); // calculate the right and left limits for the text
-
-  // Variables used in the effects routines. These can be used by the functions as needed.
-  uint8_t   _zoneStart;   // First zone module number
-  uint8_t   _zoneEnd;     // Last zone module number
-  int16_t   _nextPos;     // Next position for animation. Can be used in several different ways depending on the function.
-  int8_t    _posOffset;   // Looping increment depends on the direction of the scan for animation
-  int16_t   _startPos;    // Start position for the text LED
-  int16_t   _endPos;      // End limit for the text LED.
-
-  void setInitialEffectConditions(void); // set the initial conditions for loops in the FSM
-
-  // Character buffer handling data and methods
-  const uint8_t *_pText;             // pointer to text buffer from user call
-  const uint8_t *_pCurChar;          // the current character being processed in the text
-  bool       _endOfText;             // true when the end of the text string has been reached.
-  void       moveTextPointer(void);  // move the text pointer depending on direction of buffer scan
-
-  bool getFirstChar(uint8_t &len);   // put the first Text char into the char buffer
-  bool getNextChar(uint8_t &len);    // put the next Text char into the char buffer
-
-  // Font character handling data and methods
-  charDef_t *_userChars;  // the root of the list of user defined characters
-  uint8_t   _cBufSize;    // allocated size of the array for loading character font (cBuf)
-  uint8_t   *_cBuf;       // buffer for loading character font - allocated when font is set
-  uint8_t   _charSpacing; // spacing in columns between characters
-  uint8_t   _charCols;    // number of columns for this character
-  int16_t   _countCols;   // count of number of columns already shown
-  MD_MAX72XX::fontType_t  *_fontDef;  // font for this zone
-
-  void      allocateFontBuffer(void); // allocate _cBuf based on the size of the largest font characters
-  uint8_t   findChar(uint16_t code, uint8_t size, uint8_t *cBuf); // look for user defined character
-  uint8_t   makeChar(uint16_t c, bool addBlank);  // load a character bitmap and add in trailing _charSpacing blanks if req'd
-  void      reverseBuf(uint8_t *p, uint8_t size); // reverse the elements of the buffer
-  void      invertBuf(uint8_t *p, uint8_t size);  // invert the elements of the buffer
-
-  /// Sprite management
-#if ENA_SPRITE
-  uint8_t *_spriteInData, *_spriteOutData;
-  uint8_t _spriteInWidth, _spriteOutWidth;
-  uint8_t _spriteInFrames, _spriteOutFrames;
-#endif
-
-  // Debugging aid
-  const char *state2string(fsmState_t s);
-
-  // Effect functions
-  void  commonPrint(void);
-  void  effectPrint(bool bIn);
-  void  effectVScroll(bool bUp, bool bIn);
-  void  effectHScroll(bool bLeft, bool bIn);
-#if ENA_MISC
-  void  effectSlice(bool bIn);
-  void  effectMesh(bool bIn);
-  void  effectFade(bool bIn);
-  void  effectBlinds(bool bIn);
-  void  effectDissolve(bool bIn);
-  void  effectRandom(bool bIn);
-#endif // ENA_MISC
-#if ENA_SPRITE
-  void  effectSprite(bool bIn, uint8_t id);
-#endif // ENA_SPRITE
-#if ENA_WIPE
-  void  effectWipe(bool bLightBar, bool bIn);
-#endif // ENA_WIPE
-#if ENA_OPNCLS
-  void  effectOpen(bool bLightBar, bool bIn);
-  void  effectClose(bool bLightBar, bool bIn);
-#endif // ENA_OPNCLS
-#if ENA_SCR_DIA
-  void  effectDiag(bool bUp, bool bLeft, bool bIn);
-#endif // ENA_SCR_DIA
-#if ENA_SCAN
-  void  effectHScan(bool bIn, bool bBlank);
-  void  effectVScan(bool bIn, bool bBlank);
-#endif // ENA_SCAN
-#if ENA_GROW
-  void  effectGrow(bool bUp, bool bIn);
-#endif // ENA_GROW
-};
 
 /**
  * Core object for the Parola library.
  * This class contains one or more zones for display.
  */
-class MD_Parola : public Print
-{
-public:
+ typedef struct {
+     // The display hardware controlled by this library
+     MD_MAX72XX_t  _D;         ///< Hardware library object
+#if STATIC_ZONES
+     MD_PZone_t    _Z[MAX_ZONES];  ///< Fixed number of zones - static zone allocation
+#else
+     MD_PZone_t    *_Z;            ///< Zones buffers - dynamic zone allocation
+#endif
+     uint8_t     _numModules;///< Number of display modules [0..numModules-1]
+     uint8_t     _numZones;  ///< Max number of zones in the display [0..numZones-1]
+ } MD_Parola_t;
+
   /**
    * Class constructor - arbitrary output pins.
    *
@@ -1209,9 +791,10 @@ public:
    * \param csPin     output for selecting the device.
    * \param numDevices  number of devices connected. Default is 1 if not supplied.
    */
-  MD_Parola(MD_MAX72XX::moduleType_t mod, uint8_t dataPin, uint8_t clkPin, uint8_t csPin, uint8_t numDevices = 1):
-    _D(mod, dataPin, clkPin, csPin, numDevices), _numModules(numDevices)
-  {}
+  inline void MD_Parola_constructor(MD_Parola_t *p,enum moduleType_t mod, uint8_t dataPin, uint8_t clkPin, uint8_t csPin, uint8_t numDevices) {
+    MD_MAX72XX_constructor(&p->_D,mod, dataPin, clkPin, csPin, numDevices);
+    p->_numModules = numDevices;
+  }
 
   /**
    * Class constructor - SPI hardware interface.
@@ -1225,33 +808,31 @@ public:
    * \param csPin   output for selecting the device.
    * \param numDevices  number of devices connected. Default is 1 if not supplied.
    */
-  MD_Parola(MD_MAX72XX::moduleType_t mod, uint8_t csPin, uint8_t numDevices = 1):
-    _D(mod, csPin, numDevices), _numModules(numDevices)
-  {}
+  void MD_Parola_constructor2(MD_Parola_t *p,enum moduleType_t mod, uint8_t csPin, uint8_t numDevices);
 
-  /**
+/**
+ * Initialize the object.
+ *
+ * Initialize the object data. This needs to be called during setup() to initialize new
+ * data for the class that cannot be done during the object creation. This form of the
+ * method allows specifying the number of zones used. The module limits for the individual
+ * zones are initialized separately using setZone(), which should be done immediately after
+ * the invoking begin().
+ *
+ * \sa setZone()
+ *
+ * \param numZones  maximum number of zones
+ */
+void MD_Parola_begin(MD_Parola_t *p,uint8_t numZones);
+
+/**
    * Initialize the object.
    *
    * Initialize the object data. This needs to be called during setup() to initialize new
    * data for the class that cannot be done during the object creation. This form of the
    * method is for backward compatibility and creates one zone for the entire display.
    */
-  void begin(void) { begin(1); };
-
-  /**
-   * Initialize the object.
-   *
-   * Initialize the object data. This needs to be called during setup() to initialize new
-   * data for the class that cannot be done during the object creation. This form of the
-   * method allows specifying the number of zones used. The module limits for the individual
-   * zones are initialized separately using setZone(), which should be done immediately after
-   * the invoking begin().
-   *
-   * \sa setZone()
-   *
-   * \param numZones  maximum number of zones
-   */
-  void begin(uint8_t numZones);
+void MD_Parola_begin1(MD_Parola_t *p);
 
   /**
    * Class Destructor.
@@ -1259,7 +840,7 @@ public:
    * Release allocated memory and does the necessary to clean up once the object is
    * no longer required.
    */
-  ~MD_Parola(void);
+  void MD_Parola_destructor(MD_Parola_t *p);
 
   //--------------------------------------------------------------
   /** \name Methods for core object control.
@@ -1284,7 +865,7 @@ public:
    *
    * \return bool true if at least one zone animation has completed, false otherwise.
    */
-  bool displayAnimate(void);
+  bool MD_Parola_displayAnimate(MD_Parola_t *p);
 
   /**
    * Get the completion status for a zone.
@@ -1299,7 +880,7 @@ public:
    * \param z     specified zone
    * \return bool true if the zone animation has completed, false otherwise.
    */
-  bool getZoneStatus(uint8_t z) { if (z < _numZones) return(_Z[z].getStatus()); else return(true); }
+  inline bool MD_Parola_getZoneStatus(MD_Parola_t *p,uint8_t z) { if (z < p->_numZones) return(MD_PZone_getStatus(&p->_Z[z])); else return(true); }
 
   /**
    * Clear the display.
@@ -1308,7 +889,7 @@ public:
    *
    * \return No return value.
    */
-  void displayClear(void) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].zoneClear(); }
+  inline void MD_Parola_displayClear(MD_Parola_t *p) { for (uint8_t i = 0; i < p->_numZones; i++) MD_PZone_zoneClear(&p->_Z[i]); }
 
   /**
    * Clear one zone in the display.
@@ -1318,7 +899,7 @@ public:
    * \param z   specified zone
    * \return No return value.
    */
-  void displayClear(uint8_t z) { if (z < _numZones) _Z[z].zoneClear(); }
+  inline void MD_Parola_displayClear1(MD_Parola_t *p,uint8_t z) { if (z < p->_numZones) MD_PZone_zoneClear(&p->_Z[z]); }
 
   /**
    * Reset the current animation to restart for all zones.
@@ -1330,7 +911,7 @@ public:
    *
    * \return No return value.
    */
-  void displayReset(void) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].zoneReset(); }
+  inline void MD_Parola_displayReset(MD_Parola_t *p) { for (uint8_t i = 0; i < p->_numZones; i++) MD_PZone_zoneReset(&p->_Z[i]); }
 
   /**
    * Reset the current animation to restart for the specified zone.
@@ -1340,7 +921,7 @@ public:
    * \param z specified zone
    * \return No return value.
    */
-  void displayReset(uint8_t z) { if (z < _numZones) _Z[z].zoneReset(); }
+  void MD_Parola_displayReset1(MD_Parola_t *p,uint8_t z);
 
   /**
   * Shutdown or restart display hardware.
@@ -1353,7 +934,7 @@ public:
   * \param b  boolean value to shutdown (true) or resume (false).
   * \return No return value.
   */
-  void displayShutdown(bool b) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].zoneShutdown(b); }
+  inline void MD_Parola_displayShutdown(MD_Parola_t *p,bool b) { for (uint8_t i = 0; i < p->_numZones; i++) MD_PZone_zoneShutdown(&p->_Z[i],b); }
 
   /**
   * Suspend or resume display updates.
@@ -1366,7 +947,7 @@ public:
   * \param b  boolean value to suspend (true) or resume (false).
   * \return No return value.
   */
-  void displaySuspend(bool b) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].zoneSuspend(b); }
+  inline void MD_Parola_displaySuspend(MD_Parola_t *p,bool b) { for (uint8_t i = 0; i < p->_numZones; i++) MD_PZone_zoneSuspend(&p->_Z[i],b); }
 
   /**
   * Check if animation frame has advanced.
@@ -1380,7 +961,7 @@ public:
   *
   * \return True if the animation frame advanced in any of the display zones.
   */
-  bool isAnimationAdvanced(void) { bool b = false; for (uint8_t i = 0; i < _numZones; i++) b |= _Z[i].isAnimationAdvanced(); return(b); }
+  inline bool MD_Parola_isAnimationAdvanced(MD_Parola_t *p) { bool b = false; for (uint8_t i = 0; i < p->_numZones; i++) b |= MD_PZone_isAnimationAdvanced(&p->_Z[i]); return(b); }
 
   /**
    * Get the module limits for a zone.
@@ -1394,7 +975,7 @@ public:
    * \param moduleStart returns the first module number for the zone [0..numZones-1].
    * \param moduleEnd   returns last module number for the zone [0..numZones-1].
    */
-  inline void getZone(uint8_t z, uint8_t &moduleStart, uint8_t &moduleEnd) { if (z < _numZones) _Z[z].getZone(moduleStart, moduleEnd); }
+  inline void MD_Parola_getZone(MD_Parola_t *p,uint8_t z, uint8_t *moduleStart, uint8_t *moduleEnd) { if (z < p->_numZones) MD_PZone_getZone(&p->_Z[z],moduleStart, moduleEnd); }
 
   /**
    * Define the module limits for a zone.
@@ -1416,14 +997,32 @@ public:
    * \param moduleEnd   the last module number for the zone [0..numZones-1].
    * \return true if set, false otherwise.
    */
-  bool setZone(uint8_t z, uint8_t moduleStart, uint8_t moduleEnd);
+  bool MD_Parola_setZone(MD_Parola_t *p,uint8_t z, uint8_t moduleStart, uint8_t moduleEnd);
 
   /** @} */
   //--------------------------------------------------------------
   /** \name Methods for quick start displays.
    * @{
    */
-  /**
+/**
+  * Easy start for a non-scrolling zone text display.
+  *
+  * This method is a convenient way to set up a static text display within the
+  * specified zone. All the data necessary for setup is passed through as
+  * parameters and the display animation is started.
+  *
+  * \param z   zone specified.
+  * \param pText parameter suitable for the setTextBuffer() method.
+  * \param align parameter suitable for the the setTextAlignment() method.
+  * \param speed parameter suitable for the setSpeed() method.
+  * \param pause parameter suitable for the setPause() method.
+  * \param effectIn  parameter suitable for the setTextEffect() method.
+  * \param effectOut parameter suitable for the setTextEffect() method.
+  * \return No return value.
+  */
+ void MD_Parola_displayZoneText(MD_Parola_t *p,uint8_t z, const char *pText, enum textPosition_t align, uint16_t speed, uint16_t pause, enum textEffect_t effectIn, enum textEffect_t effectOut);
+
+/**
    * Easy start for a scrolling text display.
    *
    * This method is a convenient way to set up a scrolling display. All the data
@@ -1436,9 +1035,9 @@ public:
    * \param speed   parameter suitable for the setSpeed() method.
    * \return No return value.
    */
-  inline void displayScroll(const char *pText, textPosition_t align, textEffect_t effect, uint16_t speed)
+  inline void MD_Parola_displayScroll(MD_Parola_t *p,const char *pText, enum textPosition_t align, enum textEffect_t effect, uint16_t speed)
   {
-    displayZoneText(0, pText, align, speed, 0, effect, effect);
+      MD_Parola_displayZoneText(p,0, pText, align, speed, 0, effect, effect);
   }
 
  /**
@@ -1456,26 +1055,7 @@ public:
    * \param effectOut parameter suitable for the setTextEffect() method.
    * \return No return value.
    */
-  inline void displayText(const char *pText, textPosition_t align, uint16_t speed, uint16_t pause, textEffect_t effectIn, textEffect_t effectOut = PA_NO_EFFECT)
-    { displayZoneText(0, pText, align, speed, pause, effectIn, effectOut); }
-
- /**
-   * Easy start for a non-scrolling zone text display.
-   *
-   * This method is a convenient way to set up a static text display within the
-   * specified zone. All the data necessary for setup is passed through as
-   * parameters and the display animation is started.
-   *
-   * \param z   zone specified.
-   * \param pText parameter suitable for the setTextBuffer() method.
-   * \param align parameter suitable for the the setTextAlignment() method.
-   * \param speed parameter suitable for the setSpeed() method.
-   * \param pause parameter suitable for the setPause() method.
-   * \param effectIn  parameter suitable for the setTextEffect() method.
-   * \param effectOut parameter suitable for the setTextEffect() method.
-   * \return No return value.
-   */
-  void displayZoneText(uint8_t z, const char *pText, textPosition_t align, uint16_t speed, uint16_t pause, textEffect_t effectIn, textEffect_t effectOut = PA_NO_EFFECT);
+  void MD_Parola_displayText(MD_Parola_t *p,const char *pText, enum textPosition_t align, uint16_t speed, uint16_t pause, enum textEffect_t effectIn, enum textEffect_t effectOut);
 
   /** @} */
   //--------------------------------------------------------------
@@ -1484,57 +1064,57 @@ public:
    */
 
   /**
-   * Get the inter-character spacing in columns.
-   *
-   * \return the current setting for the space between characters in columns. Assumes one zone only.
-   */
-  inline uint8_t getCharSpacing(void) { return getCharSpacing(0); }
-
-  /**
    * Get the inter-character spacing in columns for a specific zone.
    *
    * \param z   zone number.
    * \return the current setting for the space between characters in columns.
    */
-  inline uint8_t getCharSpacing(uint8_t z) { return (z < _numZones ? _Z[z].getCharSpacing() : 0); }
+  inline uint8_t MD_Parola_getCharSpacing(MD_Parola_t *p,uint8_t z) { return (z < p->_numZones ? MD_PZone_getCharSpacing(&p->_Z[z]) : 0); }
 
-  /**
+/**
+ * Get the inter-character spacing in columns.
+ *
+ * \return the current setting for the space between characters in columns. Assumes one zone only.
+ */
+inline uint8_t MD_Parola_getCharSpacing1(MD_Parola_t *p) { return MD_Parola_getCharSpacing(p,0); }
+
+/**
+ * Get the current display invert state for a specific zone.
+ *
+ * See the setInvert() method.
+ *
+ * \param z   zone number.
+ * \return the inverted boolean value for the specified zone.
+ */
+inline bool MD_Parola_getInvert(MD_Parola_t *p,uint8_t z) { return (z < p->_numZones ? MD_PZone_getInvert(&p->_Z[z]) : false); }
+
+/**
    * Get the current display invert state.
    *
    * See the setInvert() method.
    *
    * \return true if the display is inverted. Assumes one zone only.
    */
-  inline bool getInvert(void) { return getInvert(0); }
+  inline bool MD_Parola_getInvert1(MD_Parola_t *p) { return MD_Parola_getInvert(p,0); }
 
-  /**
-   * Get the current display invert state for a specific zone.
-   *
-   * See the setInvert() method.
-   *
-   * \param z   zone number.
-   * \return the inverted boolean value for the specified zone.
-   */
-  inline bool getInvert(uint8_t z) { return (z < _numZones ? _Z[z].getInvert() : false); }
+/**
+ * Get the current pause time for a specific zone.
+ *
+ * See the setPause() method.
+ *
+ * \param z   zone number.
+ * \return the pause value in milliseconds for the specified zone.
+ */
+inline uint16_t MD_Parola_getPause(MD_Parola_t *p,uint8_t z) { return (z < p->_numZones ? MD_PZone_getPause(&p->_Z[z]) : 0); }
 
-  /**
+/**
    * Get the current pause time.
    *
    * See the setPause() method. Assumes one zone only.
    *
    * \return the pause value in milliseconds.
    */
-  inline uint16_t getPause(void) { return getPause(0); }
-
-  /**
-   * Get the current pause time for a specific zone.
-   *
-   * See the setPause() method.
-   *
-   * \param z   zone number.
-   * \return the pause value in milliseconds for the specified zone.
-   */
-  inline uint16_t getPause(uint8_t z) { return (z < _numZones ? _Z[z].getPause() : 0); }
+  inline uint16_t MD_Parola_getPause1(MD_Parola_t *p) { return MD_Parola_getPause(p,0); }
 
   /**
    * Get the horizontal scrolling spacing.
@@ -1543,26 +1123,26 @@ public:
    *
    * \return the speed value.
    */
-  inline uint16_t getScrollSpacing(void) { return _Z[0].getScrollSpacing(); }
+  inline uint16_t MD_Parola_getScrollSpacing(MD_Parola_t *p) { return MD_PZone_getScrollSpacing(&p->_Z[0]); }
 
-  /**
+/**
+ * Get the current IN animation speed for the specified zone.
+ *
+ * See the setSpeed() method.
+ *
+ * \param z   zone number.
+ * \return the speed value for the specified zone.
+ */
+inline uint16_t MD_Parola_getSpeed(MD_Parola_t *p,uint8_t z) { return (z < p->_numZones ? MD_PZone_getSpeed(&p->_Z[z]) : 0); }
+
+/**
    * Get the current IN animation speed.
    *
    * See the setSpeed() method. Assumes one zone only
    *
    * \return the speed value.
    */
-  inline uint16_t getSpeed(void) { return getSpeed(0); }
-
-  /**
-   * Get the current IN animation speed for the specified zone.
-   *
-   * See the setSpeed() method.
-   *
-   * \param z   zone number.
-   * \return the speed value for the specified zone.
-   */
-  inline uint16_t getSpeed(uint8_t z) { return (z < _numZones ? _Z[z].getSpeed() : 0); }
+  inline uint16_t MD_Parola_getSpeed1(MD_Parola_t *p) { return MD_Parola_getSpeed(p,0); }
 
   /**
    * Get the current IN animation speed for the specified zone.
@@ -1572,7 +1152,7 @@ public:
    * \param z   zone number.
    * \return the IN speed value for the specified zone.
    */
-  inline uint16_t getSpeedIn(uint8_t z) { return (z < _numZones ? _Z[z].getSpeedIn() : 0); }
+  inline uint16_t MD_Parola_getSpeedIn(MD_Parola_t *p,uint8_t z) { return (z < p->_numZones ? MD_PZone_getSpeedIn(&p->_Z[z]) : 0); }
 
   /**
    * Get the current OUT animation speed for the specified zone.
@@ -1582,16 +1162,7 @@ public:
    * \param z   zone number.
    * \return the OUT speed value for the specified zone.
    */
-  inline uint16_t getSpeedOut(uint8_t z) { return (z < _numZones ? _Z[z].getSpeedOut() : 0); }
-
- /**
-   * Get the current text alignment specification.
-   *
-   * Assumes one zone only.
-   *
-   * \return the current text alignment setting.
-   */
-  inline textPosition_t getTextAlignment(void) { return getTextAlignment(0); }
+  inline uint16_t MD_Parola_getSpeedOut(MD_Parola_t *p,uint8_t z) { return (z < p->_numZones ? MD_PZone_getSpeedOut(&p->_Z[z]) : 0); }
 
  /**
    * Get the current text alignment specification for the specified zone.
@@ -1599,20 +1170,17 @@ public:
    * \param z   zone number.
    * \return the current text alignment setting for the specified zone.
    */
-  inline textPosition_t getTextAlignment(uint8_t z) { return (z < _numZones ? _Z[z].getTextAlignment() : PA_CENTER); }
+  inline enum textPosition_t MD_Parola_getTextAlignment(MD_Parola_t *p,uint8_t z) { return (z < p->_numZones ? MD_PZone_getTextAlignment(&p->_Z[z]) : PA_CENTER); }
 
- /**
-   * Get the text width in columns
+/**
+  * Get the current text alignment specification.
+  *
+  * Assumes one zone only.
+  *
+  * \return the current text alignment setting.
+  */
+inline enum textPosition_t MD_Parola_getTextAlignment1(MD_Parola_t *p) { return MD_Parola_getTextAlignment(p,0); }
 
-   * Evaluate the width in column for the text string *p as the sum of all 
-   * the characters and the space between them, using the currently assigned font.
-   * Assumes one zone display.
-   *
-   * \param p   nul terminate character string to evaluate.
-   * \return the number of columns used to display the text.
-   */
-  inline uint16_t getTextColumns(const char *p) { return(getTextColumns(0, p)); }
-  
  /**
    * Get the text width in columns
 
@@ -1624,9 +1192,21 @@ public:
    * \param p   nul terminate character string to evaluate.
    * \return the number of columns used to display the text.
    */
-  inline uint16_t getTextColumns(uint8_t z, const char *p) { return(z < _numZones && p != nullptr ? _Z[z].getTextWidth((uint8_t *)p) : 0); }
+  inline uint16_t MD_Parola_getTextColumns(MD_Parola_t *p,uint8_t z, const char *s) { return(z < p->_numZones && s != NULL ? MD_PZone_getTextWidth(&p->_Z[z],(uint8_t *)s) : 0); }
 
- /**
+/**
+   * Get the text width in columns
+
+   * Evaluate the width in column for the text string *p as the sum of all
+   * the characters and the space between them, using the currently assigned font.
+   * Assumes one zone display.
+   *
+   * \param p   nul terminate character string to evaluate.
+   * \return the number of columns used to display the text.
+   */
+inline uint16_t MD_Parola_getTextColumns1(MD_Parola_t *p,const char *s) { return(MD_Parola_getTextColumns(p,0, s)); }
+
+/**
    * Get the value of specified display effect.
    *
    * The display effect is one of the zoneEffect_t types. The returned value will be
@@ -1636,7 +1216,7 @@ public:
    * \param ze  the required text alignment.
    * \return true if the value is set, false otherwise.
    */
-  inline boolean getZoneEffect(uint8_t z, zoneEffect_t ze) { return (z < _numZones ? _Z[z].getZoneEffect(ze) : false); }
+  inline boolean MD_Parola_getZoneEffect(MD_Parola_t *p,uint8_t z, enum zoneEffect_t ze) { return (z < p->_numZones ? MD_PZone_getZoneEffect(&p->_Z[z],ze) : false); }
 
   /**
    * Set the inter-character spacing in columns for all zones.
@@ -1646,7 +1226,7 @@ public:
    * \param cs  space between characters in columns.
    * \return No return value.
    */
-  void setCharSpacing(uint8_t cs) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].setCharSpacing(cs); }
+  void MD_Parola_setCharSpacing(MD_Parola_t *p,uint8_t cs);
 
   /**
    * Set the inter-character spacing in columns for the specified zone.
@@ -1657,7 +1237,7 @@ public:
    * \param cs  space between characters in columns.
    * \return No return value.
    */
-  inline void setCharSpacing(uint8_t z, uint8_t cs) { if (z < _numZones) _Z[z].setCharSpacing(cs); }
+  inline void MD_Parola_setCharSpacing2(MD_Parola_t *p,uint8_t z, uint8_t cs) { if (z < p->_numZones) MD_PZone_setCharSpacing(&p->_Z[z],cs); }
 
   /**
    * Set the display brightness for all the zones.
@@ -1667,7 +1247,7 @@ public:
    * \param intensity the intensity to set the display (0-15).
    * \return No return value.
    */
-  inline void setIntensity(uint8_t intensity) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].setIntensity(intensity); }
+  inline void MD_Parola_setIntensity(MD_Parola_t *p,uint8_t intensity) { for (uint8_t i = 0; i < p->_numZones; i++) MD_PZone_setIntensity(&p->_Z[i],intensity); }
 
   /**
    * Set the display brightness for the specified zone.
@@ -1678,7 +1258,7 @@ public:
    * \param intensity the intensity to set the display (0-15).
    * \return No return value.
    */
-  inline void setIntensity(uint8_t z, uint8_t intensity) { if (z < _numZones) _Z[z].setIntensity(intensity); }
+  inline void MD_Parola_setIntensity2(MD_Parola_t *p,uint8_t z, uint8_t intensity) { if (z < p->_numZones) MD_PZone_setIntensity(&p->_Z[z],intensity); }
 
   /**
    * Invert the display in all the zones.
@@ -1688,7 +1268,7 @@ public:
    * \param invert  true for inverted display, false for normal display
    * \return No return value.
    */
-  inline void setInvert(uint8_t invert) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].setInvert(invert); }
+  void MD_Parola_setInvert(MD_Parola_t *p,uint8_t invert);
 
   /**
    * Invert the display in the specified zone.
@@ -1699,7 +1279,7 @@ public:
    * \param invert  true for inverted display, false for normal display
    * \return No return value.
    */
-  inline void setInvert(uint8_t z, uint8_t invert) { if (z < _numZones) _Z[z].setInvert(invert); }
+  inline void MD_Parola_setInvert2(MD_Parola_t *p,uint8_t z, uint8_t invert) { if (z < p->_numZones) MD_PZone_setInvert(&p->_Z[z],invert); }
 
   /**
    * Set the pause between ENTER and EXIT animations for all zones.
@@ -1711,7 +1291,7 @@ public:
    * \param pause the time, in milliseconds, between animations.
    * \return No return value.
    */
-  inline void setPause(uint16_t pause) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].setPause(pause); }
+  void MD_Parola_setPause(MD_Parola_t *p,uint16_t pause);
 
   /**
    * Set the pause between ENTER and EXIT animations for the specified zone.
@@ -1722,7 +1302,7 @@ public:
    * \param pause the time, in milliseconds, between animations.
    * \return No return value.
    */
-  inline void setPause(uint8_t z, uint16_t pause) { if (z < _numZones) _Z[z].setPause(pause); }
+  inline void MD_Parola_setPause2(MD_Parola_t *p,uint8_t z, uint16_t pause) { if (z < p->_numZones) MD_PZone_setPause(&p->_Z[z],pause); }
 
   /**
    * Set the horizontal scrolling distance between messages for all the zones.
@@ -1735,7 +1315,7 @@ public:
    * \param space the spacing, in columns, between messages; zero for default behaviour..
    * \return No return value.
    */
-  inline void setScrollSpacing(uint16_t space) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].setScrollSpacing(space); }
+  void MD_Parola_setScrollSpacing(MD_Parola_t *p,uint16_t space);
 
   /**
    * Set identical IN and OUT animation frame speed for all zones.
@@ -1748,7 +1328,7 @@ public:
    * \param speed the time, in milliseconds, between animation frames.
    * \return No return value.
    */
-  inline void setSpeed(uint16_t speed) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].setSpeed(speed); }
+  inline void MD_Parola_setSpeed(MD_Parola_t *p,uint16_t speed) { for (uint8_t i = 0; i < p->_numZones; i++) MD_PZone_setSpeed(&p->_Z[i],speed); }
 
   /**
    * Set separate IN and OUT animation frame speed for all zones.
@@ -1762,7 +1342,7 @@ public:
    * \param speedOut the time, in milliseconds, between OUT animation frames.
    * \return No return value.
    */
-  inline void setSpeedInOut(uint16_t speedIn, uint16_t speedOut) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].setSpeedInOut(speedIn, speedOut); }
+  void MD_Parola_setSpeedInOut(MD_Parola_t *p,uint16_t speedIn, uint16_t speedOut);
 
   /**
    * Set the identical IN and OUT animation frame speed for the specified zone.
@@ -1773,7 +1353,7 @@ public:
    * \param speed the time, in milliseconds, between animation frames.
    * \return No return value.
    */
-  inline void setSpeed(uint8_t z, uint16_t speed) { if (z < _numZones) _Z[z].setSpeed(speed); }
+  void MD_Parola_setSpeed2(MD_Parola_t *p,uint8_t z, uint16_t speed);
 
   /**
    * Set the separate IN and OUT animation frame speed for the specified zone.
@@ -1785,7 +1365,7 @@ public:
    * \param speedOut the time, in milliseconds, between OUT animation frames.
    * \return No return value.
    */
-  inline void setSpeedInOut(uint8_t z, uint16_t speedIn, uint16_t speedOut) { if (z < _numZones) _Z[z].setSpeedInOut(speedIn, speedOut); }
+  inline void MD_Parola_setSpeedInOut2(MD_Parola_t *p,uint8_t z, uint16_t speedIn, uint16_t speedOut) { if (z < p->_numZones) MD_PZone_setSpeedInOut(&p->_Z[z],speedIn, speedOut); }
 
 #if ENA_SPRITE
   /**
@@ -1812,9 +1392,9 @@ public:
   * \param outFrames the number of frames for the sprite.
   * \return No return value.
   */
-  void setSpriteData(uint8_t z, const uint8_t *inData, uint8_t inWidth, uint8_t inFrames,
+  inline void MD_Parola_setSpriteData2(MD_Parola_t *p,uint8_t z, const uint8_t *inData, uint8_t inWidth, uint8_t inFrames,
                                 const uint8_t *outData, uint8_t outWidth, uint8_t outFrames)
-  { if (z < _numZones) _Z[z].setSpriteData(inData, inWidth, inFrames, outData, outWidth, outFrames); }
+  { if (z < p->_numZones) MD_PZone_setSpriteData(&p->_Z[z],inData, inWidth, inFrames, outData, outWidth, outFrames); }
 
   /**
   * Set data for user sprite effect (whole display).
@@ -1829,9 +1409,9 @@ public:
   * \param outFrames the number of frames for the sprite.
   * \return No return value.
   */
-  void setSpriteData(const uint8_t *inData, uint8_t inWidth, uint8_t inFrames,
+  inline void MD_Parola_setSpriteData(MD_Parola_t *p,const uint8_t *inData, uint8_t inWidth, uint8_t inFrames,
                      const uint8_t *outData, uint8_t outWidth, uint8_t outFrames)
-  { for (uint8_t i = 0; i < _numZones; i++) _Z[i].setSpriteData(inData, inWidth, inFrames, outData, outWidth, outFrames); }
+  { for (uint8_t i = 0; i < p->_numZones; i++) MD_PZone_setSpriteData(&p->_Z[i],inData, inWidth, inFrames, outData, outWidth, outFrames); }
 
 #endif
 
@@ -1843,7 +1423,7 @@ public:
    * \param ta  the required text alignment.
    * \return No return value.
    */
-  inline void setTextAlignment(textPosition_t ta) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].setTextAlignment(ta); }
+  void MD_Parola_setTextAlignment(MD_Parola_t *p,enum textPosition_t ta);
 
   /**
    * Set the text alignment for the specified zone.
@@ -1854,9 +1434,20 @@ public:
    * \param ta  the required text alignment.
    * \return No return value.
    */
-  inline void setTextAlignment(uint8_t z, textPosition_t ta) { if (z < _numZones) _Z[z].setTextAlignment(ta); }
+  inline void MD_Parola_setTextAlignment2(MD_Parola_t *p,uint8_t z, enum textPosition_t ta) { if (z < p->_numZones) MD_PZone_setTextAlignment(&p->_Z[z],ta); }
 
-  /**
+/**
+ * Set the pointer to the text buffer for the specified zone.
+ *
+ * See comments for the single zone version of this method.
+ *
+ * \param z zone number.
+ * \param pb  pointer to the text buffer to be used.
+ * \return No return value.
+ */
+inline void MD_Parola_setTextBuffer(MD_Parola_t *p,uint8_t z, const char *pb) { if (z < p->_numZones) MD_PZone_setTextBuffer(&p->_Z[z],pb); }
+
+/**
    * Set the pointer to the text buffer.
    *
    * Sets the text buffer to be a pointer to user data. The library does not allocate
@@ -1872,18 +1463,7 @@ public:
    * \param pb  pointer to the text buffer to be used.
    * \return No return value.
    */
-  inline void setTextBuffer(const char *pb) { setTextBuffer(0, pb); }
-
-  /**
-   * Set the pointer to the text buffer for the specified zone.
-   *
-   * See comments for the single zone version of this method.
-   *
-   * \param z zone number.
-   * \param pb  pointer to the text buffer to be used.
-   * \return No return value.
-   */
-  inline void setTextBuffer(uint8_t z, const char *pb) { if (z < _numZones) _Z[z].setTextBuffer(pb); }
+  inline void MD_Parola_setTextBuffer1(MD_Parola_t *p,const char *pb) { MD_Parola_setTextBuffer(p,0, pb); }
 
   /**
    * Set the entry and exit text effects for all zones.
@@ -1897,7 +1477,7 @@ public:
    * \param effectOut the exit effect, one of the textEffect_t enumerated values.
    * \return No return value.
    */
-  inline void setTextEffect(textEffect_t effectIn, textEffect_t effectOut) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].setTextEffect(effectIn, effectOut); }
+  void MD_Parola_setTextEffect(MD_Parola_t *p,enum textEffect_t effectIn, enum textEffect_t effectOut);
 
   /**
    * Set the entry and exit text effects for a specific zone.
@@ -1909,7 +1489,7 @@ public:
    * \param effectOut the exit effect, one of the textEffect_t enumerated values.
    * \return No return value.
    */
-  inline void setTextEffect(uint8_t z, textEffect_t effectIn, textEffect_t effectOut) { if (z < _numZones) _Z[z].setTextEffect(effectIn, effectOut); }
+  void MD_Parola_setTextEffect2(MD_Parola_t *p,uint8_t z, enum textEffect_t effectIn, enum textEffect_t effectOut);
 
   /**
    * Set the display effect for the specified zone.
@@ -1923,7 +1503,7 @@ public:
    * \param ze  the required text alignment.
    * \return No return value.
    */
-  inline void setZoneEffect(uint8_t z, boolean b, zoneEffect_t ze) { if (z < _numZones) _Z[z].setZoneEffect(b, ze); }
+  inline void MD_Parola_setZoneEffect(MD_Parola_t *p,uint8_t z, boolean b, enum zoneEffect_t ze) { if (z < p->_numZones) MD_PZone_setZoneEffect(&p->_Z[z],b, ze); }
 
   /**
   * Synchronize the start of zone animations.
@@ -1936,7 +1516,7 @@ public:
   *
   * \return No return value.
   */
-  inline void synchZoneStart(void) { for (uint8_t i = 1; i < _numZones; i++) _Z[i].setSynchTime(_Z[0].getSynchTime()); }
+  inline void MD_Parola_synchZoneStart(MD_Parola_t *p) { for (uint8_t i = 1; i < p->_numZones; i++) MD_PZone_setSynchTime(&p->_Z[i],MD_PZone_getSynchTime(&p->_Z[0])); }
 
 /** @} */
   //--------------------------------------------------------------
@@ -1961,7 +1541,7 @@ public:
    * \param data  pointer to the character data.
    * \return No return value.
    */
-  inline void addChar(uint16_t code, uint8_t *data) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].addChar(code, data); }
+  inline void MD_Parola_addChar(MD_Parola_t *p,uint16_t code, uint8_t *data) { for (uint8_t i = 0; i < p->_numZones; i++) MD_PZone_addChar(&p->_Z[i],code, data); }
 
   /**
    * Add a user defined character to the replacement specified zone.
@@ -1973,7 +1553,7 @@ public:
    * \param data  pointer to the character data.
    * \return true of the character was inserted in the substitution list.
    */
-  inline bool addChar(uint8_t z, uint16_t code, uint8_t *data) { return(z < _numZones ? _Z[z].addChar(code, data) : false); }
+  inline bool MD_Parola_addChar2(MD_Parola_t *p,uint8_t z, uint16_t code, uint8_t *data) { return(z < p->_numZones ? MD_PZone_addChar(&p->_Z[z],code, data) : false); }
 
   /**
    * Delete a user defined character to the replacement list for all zones.
@@ -1983,7 +1563,7 @@ public:
    * \param code  ASCII code for the character data.
    * \return No return value.
    */
-  inline void delChar(uint16_t code) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].delChar(code); }
+  inline void MD_Parola_delChar(MD_Parola_t *p,uint16_t code) { for (uint8_t i = 0; i < p->_numZones; i++) MD_PZone_delChar(&p->_Z[i],code); }
 
   /**
    * Delete a user defined character to the replacement list for the specified zone.
@@ -1994,7 +1574,7 @@ public:
    * \param code  ASCII code for the character data.
    * \return true of the character was found in the substitution list.
    */
-  inline bool delChar(uint8_t z, uint16_t code) { return(z < _numZones ? _Z[z].delChar(code) : false); }
+  inline bool MD_Parola_delChar2(MD_Parola_t *p,uint8_t z, uint16_t code) { return(z < p->_numZones ? MD_PZone_delChar(&p->_Z[z],code) : false); }
 
   /**
    * Get the display font for specified zone.
@@ -2004,7 +1584,7 @@ public:
    * \param z specified zone.
    * \return Pointer to the font definition used.
    */
-  inline MD_MAX72XX::fontType_t* getFont(uint8_t z) { if (z < _numZones) return (_Z[z].getZoneFont()); else return(nullptr); };
+  inline fontType_t* MD_Parola_getFont(MD_Parola_t *p,uint8_t z) { if (z < p->_numZones) return (MD_PZone_getZoneFont(&p->_Z[z])); else return(NULL); };
 
   /**
    * Get the display font for single zone display.
@@ -2013,7 +1593,7 @@ public:
    *
    * \return Pointer to the font definition used.
    */
-  inline MD_MAX72XX::fontType_t* getFont(void) { return(getFont(0)); };
+  inline fontType_t* MD_Parola_getFont1(MD_Parola_t *p) { return(MD_Parola_getFont(p,0)); };
 
   /**
    * Set the display font for all zones.
@@ -2025,7 +1605,7 @@ public:
    * \param fontDef Pointer to the font definition to be used.
    * \return No return value.
    */
-  inline void setFont(MD_MAX72XX::fontType_t *fontDef) { for (uint8_t i = 0; i < _numZones; i++) _Z[i].setZoneFont(fontDef); }
+  inline void MD_Parola_setFont(MD_Parola_t *p,fontType_t *fontDef) { for (uint8_t i = 0; i < p->_numZones; i++) MD_PZone_setZoneFont(&p->_Z[i],fontDef); }
 
   /**
    * Set the display font for a specific zone.
@@ -2038,7 +1618,7 @@ public:
    * \param fontDef Pointer to the font definition to be used.
    * \return No return value.
    */
-  inline void setFont(uint8_t z, MD_MAX72XX::fontType_t *fontDef) { if (z < _numZones) _Z[z].setZoneFont(fontDef); }
+  inline void MD_Parola_setFont2(MD_Parola_t *p,uint8_t z, fontType_t *fontDef) { if (z < p->_numZones) MD_PZone_setZoneFont(&p->_Z[z],fontDef); }
 
   /** @} */
 
@@ -2055,7 +1635,7 @@ public:
   *
   * \return Pointer to the MD_MAX72xx object used by the library.
   */
-  inline MD_MAX72XX *getGraphicObject(void) { return(&_D); }
+  inline MD_MAX72XX_t *MD_Parola_getGraphicObject(MD_Parola_t *p) { return(&p->_D); }
 
   /**
   * Get the start and end column numbers for the whole display.
@@ -2067,7 +1647,7 @@ public:
   * \param endColumn the by-reference parameter that will hold the return value for the end column.
   * \return The start and end columns in the by-reference parameters.
   */
-  inline void getDisplayExtent(uint16_t &startColumn, uint16_t &endColumn) { startColumn = ZONE_START_COL(0); endColumn = ZONE_END_COL(_numModules-1); }
+  inline void MD_Parola_getDisplayExtent(MD_Parola_t *p,uint16_t *startColumn, uint16_t *endColumn) { *startColumn = ZONE_START_COL(0); *endColumn = ZONE_END_COL(p->_numModules-1); }
 
   /**
   * Get the start and end column numbers for the required zone.
@@ -2082,7 +1662,20 @@ public:
   * \param endColumn the by-reference parameter that will hold the return value for the end column.
   * \return The start and end columns in the by-reference parameters.
   */
-  inline void getDisplayExtent(uint8_t z, uint16_t &startColumn, uint16_t &endColumn) { if (z < _numZones) _Z[z].getZoneExtent(startColumn, endColumn); }
+  inline void MD_Parola_getDisplayExtent2(MD_Parola_t *p,uint8_t z, uint16_t *startColumn, uint16_t *endColumn) { if (z < p->_numZones) MD_PZone_getZoneExtent(&p->_Z[z],startColumn, endColumn); }
+
+/**
+* Get the start and end column numbers for the text displayed.
+*
+* Returns the start and end column numbers for the text displayed in the zone.
+* This retains consistency between user code and library.
+*
+* \param z zone specified
+* \param startColumn the by-reference parameter that will hold the return value for the start column.
+* \param endColumn the by-reference parameter that will hold the return value for the end column.
+* \return The start and end columns in the by-reference parameters.
+*/
+inline void MD_Parola_getTextExtent(MD_Parola_t *p,uint8_t z, uint16_t *startColumn, uint16_t *endColumn) { if (z < p->_numZones) MD_PZone_getTextExtent(&p->_Z[z],startColumn, endColumn); }
 
   /**
   * Get the start and end column numbers for the text displayed.
@@ -2094,20 +1687,8 @@ public:
   * \param endColumn the by-reference parameter that will hold the return value for the end column.
   * \return The start and end columns in the by-reference parameters.
   */
-  inline void getTextExtent(uint16_t &startColumn, uint16_t &endColumn) { getTextExtent(0, startColumn, endColumn); }
+  inline void MD_Parola_getTextExtent1(MD_Parola_t *p,uint16_t *startColumn, uint16_t *endColumn) { MD_Parola_getTextExtent(p,0, startColumn, endColumn); }
 
-  /**
-  * Get the start and end column numbers for the text displayed.
-  *
-  * Returns the start and end column numbers for the text displayed in the zone.
-  * This retains consistency between user code and library.
-  *
-  * \param z zone specified
-  * \param startColumn the by-reference parameter that will hold the return value for the start column.
-  * \param endColumn the by-reference parameter that will hold the return value for the end column.
-  * \return The start and end columns in the by-reference parameters.
-  */
-  inline void getTextExtent(uint8_t z, uint16_t &startColumn, uint16_t &endColumn) { if (z < _numZones) _Z[z].getTextExtent(startColumn, endColumn); }
   /** @} */
 #endif
 
@@ -2116,7 +1697,22 @@ public:
   * @{
   */
 
-  /**
+/**
+* Write a nul terminated string to the output display.
+*
+* Display a nul terminated string when given a pointer to the char array.
+* Invokes an animation using PA_PRINT with all other settings (alignment,
+* speed, etc) taken from current defaults.
+* This method also invokes the animation for the print and returns when that has
+* finished, so it blocks while the printing is happening, which should be at least
+* one iteration of the wait loop.
+*
+* \param str  Pointer to the nul terminated char array.
+* \return the number of characters written.
+*/
+size_t MD_Parola_write1(MD_Parola_t *p,const char *str);
+
+/**
   * Write a single character to the output display
   *
   * Display a character when given the ASCII code for it. The character is
@@ -2128,22 +1724,7 @@ public:
   * \param c  ASCII code for the character to write.
   * \return the number of characters written.
   */
-  virtual size_t write(uint8_t c) { char sz[2]; sz[0] = c; sz[1] = '\0'; write(sz); return(1); }
-
-  /**
-  * Write a nul terminated string to the output display.
-  *
-  * Display a nul terminated string when given a pointer to the char array.
-  * Invokes an animation using PA_PRINT with all other settings (alignment,
-  * speed, etc) taken from current defaults.
-  * This method also invokes the animation for the print and returns when that has
-  * finished, so it blocks while the printing is happening, which should be at least
-  * one iteration of the wait loop.
-  *
-  * \param str  Pointer to the nul terminated char array.
-  * \return the number of characters written.
-  */
-  virtual size_t write(const char *str);
+inline size_t MD_Parola_write(MD_Parola_t *p,uint8_t c) { char sz[2]; sz[0] = c; sz[1] = '\0'; MD_Parola_write1(p,sz); return(1); }
 
   /**
   * Write a character buffer to the output display.
@@ -2157,19 +1738,7 @@ public:
   * \param size The number of bytes to write.
   * \return the number of bytes written.
   */
-  virtual size_t write(const uint8_t *buffer, size_t size);
+  size_t MD_Parola_write2(MD_Parola_t *p,const uint8_t *buffer, size_t size);
 
   /** @} */
-
-  private:
-  // The display hardware controlled by this library
-  MD_MAX72XX  _D;         ///< Hardware library object
-#if STATIC_ZONES
-  MD_PZone    _Z[MAX_ZONES];  ///< Fixed number of zones - static zone allocation
-#else
-  MD_PZone    *_Z;            ///< Zones buffers - dynamic zone allocation
-#endif
-  uint8_t     _numModules;///< Number of display modules [0..numModules-1]
-  uint8_t     _numZones;  ///< Max number of zones in the display [0..numZones-1]
-};
 

@@ -29,30 +29,30 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 #if ENA_MISC
 
-void MD_PZone::effectSlice(bool bIn)
+void MD_PZone_effectSlice(MD_PZone_t *z,bool bIn)
 {
   if (bIn)
   {
-    switch(_fsmState)
+    switch(z->_fsmState)
     {
     case INITIALISE:
     case GET_FIRST_CHAR:
       PRINT_STATE("I SLICE");
 
-      if (!getFirstChar(_charCols))
+      if (!MD_PZone_getFirstChar(z,&z->_charCols))
       {
-        _fsmState = END;
+        z->_fsmState = END;
         break;
       }
-      zoneClear();
-      _countCols = 0;
-      _nextPos = ZONE_START_COL(_zoneStart);
-      _endPos = _limitLeft;
+      MD_PZone_zoneClear(z);
+      z->_countCols = 0;
+      z->_nextPos = ZONE_START_COL(z->_zoneStart);
+      z->_endPos = z->_limitLeft;
 
       FSMPRINT(" - Start ", _nextPos);
       FSMPRINT(", End ", _endPos);
 
-      _fsmState = PUT_CHAR;
+      z->_fsmState = PUT_CHAR;
       break;
 
     case GET_NEXT_CHAR: // Load the next character from the font table
@@ -60,14 +60,14 @@ void MD_PZone::effectSlice(bool bIn)
       // Have we reached the end of the characters string?
       do
       {
-        if (!getNextChar(_charCols))
-          _fsmState = PAUSE;
-      } while (_charCols == 0 && _fsmState != PAUSE);
+        if (!MD_PZone_getNextChar(z,&z->_charCols))
+          z->_fsmState = PAUSE;
+      } while (z->_charCols == 0 && z->_fsmState != PAUSE);
 
-      if (_fsmState == PAUSE) break;
+      if (z->_fsmState == PAUSE) break;
 
-      _countCols = 0;
-      _fsmState = PUT_CHAR;
+      z->_countCols = 0;
+      z->_fsmState = PUT_CHAR;
       // !! fall through to next state to start displaying
 
     case PUT_CHAR:  // display the next part of the character
@@ -76,47 +76,47 @@ void MD_PZone::effectSlice(bool bIn)
       FSMPRINT(", anim ", _nextPos);
 
       // if the text is too long for the zone, stop when we are at the last column of the zone
-      if (_nextPos == _endPos)
+      if (z->_nextPos == z->_endPos)
       {
-        _MX->setColumn(_nextPos, DATA_BAR(_cBuf[_countCols]));
-        _fsmState = PAUSE;
+        MD_MAX72XX_setColumn2(z->_MX,z->_nextPos, DATA_BAR(z->_cBuf[z->_countCols]));
+        z->_fsmState = PAUSE;
         break;
       }
 
-      if (_cBuf[_countCols] == 0) // empty column ?
+      if (z->_cBuf[z->_countCols] == 0) // empty column ?
       {
-        _nextPos = _endPos; // pretend we just animated it!
+        z->_nextPos = z->_endPos; // pretend we just animated it!
       }
       else  // something to animate
       {
         // clear the column and animate the next one
-        if (_nextPos != _endPos) _MX->setColumn(_nextPos, EMPTY_BAR);
-        _nextPos++;
-        _MX->setColumn(_nextPos, DATA_BAR(_cBuf[_countCols]));
+        if (z->_nextPos != z->_endPos) MD_MAX72XX_setColumn2(z->_MX,z->_nextPos, EMPTY_BAR);
+        z->_nextPos++;
+        MD_MAX72XX_setColumn2(z->_MX,z->_nextPos, DATA_BAR(z->_cBuf[z->_countCols]));
       }
 
       // set up for the next time
-      if (_nextPos == _endPos)
+      if (z->_nextPos == z->_endPos)
       {
-        _nextPos = ZONE_START_COL(_zoneStart);
-        _countCols++;
-        _endPos--;
+        z->_nextPos = ZONE_START_COL(z->_zoneStart);
+        z->_countCols++;
+        z->_endPos--;
       }
-      if (_countCols == _charCols) _fsmState = GET_NEXT_CHAR;
+      if (z->_countCols == z->_charCols) z->_fsmState = GET_NEXT_CHAR;
       break;
 
     default:
-      _fsmState = PAUSE;
+      z->_fsmState = PAUSE;
     }
   }
   else  // exiting
   {
-    switch(_fsmState)
+    switch(z->_fsmState)
     {
     case PAUSE:
       PRINT_STATE("O SLICE");
-      _nextPos = _endPos = _limitLeft;
-      _fsmState = PUT_CHAR;
+      z->_nextPos = z->_endPos = z->_limitLeft;
+      z->_fsmState = PUT_CHAR;
       // fall through
 
     case GET_FIRST_CHAR:
@@ -126,27 +126,27 @@ void MD_PZone::effectSlice(bool bIn)
       FSMPRINT(" - Next ", _endPos);
       FSMPRINT(", anim ", _nextPos);
 
-      while(_MX->getColumn(_nextPos) == EMPTY_BAR && _endPos >= _limitRight)
-        _nextPos = _endPos--; // pretend we just animated it!
+      while(MD_MAX72XX_getColumn1(z->_MX,z->_nextPos) == EMPTY_BAR && z->_endPos >= z->_limitRight)
+        z->_nextPos = z->_endPos--; // pretend we just animated it!
 
-      if (_endPos + 1 < _limitRight)
-        _fsmState = END;  //reached the end
+      if (z->_endPos + 1 < z->_limitRight)
+          z->_fsmState = END;  //reached the end
       else
       {
         // Move the column over to the left and blank out previous position
-        if (_nextPos < ZONE_END_COL(_zoneEnd))
-          _MX->setColumn(_nextPos + 1, _MX->getColumn(_nextPos));
-        _MX->setColumn(_nextPos, EMPTY_BAR);
-        _nextPos++;
+        if (z->_nextPos < ZONE_END_COL(z->_zoneEnd))
+            MD_MAX72XX_setColumn2(z->_MX,z->_nextPos + 1, MD_MAX72XX_getColumn1(z->_MX,z->_nextPos));
+        MD_MAX72XX_setColumn2(z->_MX,z->_nextPos, EMPTY_BAR);
+        z->_nextPos++;
 
         // set up for the next time
-        if (_nextPos == ZONE_END_COL(_zoneEnd) + 1)
-          _nextPos = _endPos--;
+        if (z->_nextPos == ZONE_END_COL(z->_zoneEnd) + 1)
+            z->_nextPos = z->_endPos--;
       }
       break;
 
     default:
-      _fsmState = END;
+        z->_fsmState = END;
     }
   }
 }

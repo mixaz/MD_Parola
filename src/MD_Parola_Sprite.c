@@ -29,32 +29,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 #if ENA_SPRITE
 
-void MD_PZone::effectSprite(bool bIn, uint8_t id)
+void MD_PZone_effectSprite(MD_PZone_t *z,bool bIn, uint8_t id)
 // Animated Pacman sprite leads or eats up the message.
 // Print up the whole message and then remove the parts we
 // don't need in order to do the animation.
 {
   if (bIn)  // incoming - sprite moves left to right in the zone
   {
-    switch (_fsmState)
+    switch (z->_fsmState)
     {
     case INITIALISE:
       PRINT_STATE("I SPRITE");
-      setInitialEffectConditions();
-      if (_startPos < _endPos)
+      MD_PZone_setInitialEffectConditions(z);
+      if (z->_startPos < z->_endPos)
       {
-        int16_t t = _startPos;
-        _startPos = _endPos;
-        _endPos = t;
+        int16_t t = z->_startPos;
+        z->_startPos = z->_endPos;
+        z->_endPos = t;
       }
-      if (_spriteInData == nullptr)
+      if (z->_spriteInData == NULL)
       {
-        _fsmState = END;
+        z->_fsmState = END;
         break;
       }
-      _posOffset = 0;   // current animation frame for the sprite
-      _nextPos = ZONE_END_COL(_zoneEnd) + 1;
-      _fsmState = PUT_CHAR;
+      z->_posOffset = 0;   // current animation frame for the sprite
+      z->_nextPos = ZONE_END_COL(z->_zoneEnd) + 1;
+      z->_fsmState = PUT_CHAR;
       // fall through to next state
 
     case GET_FIRST_CHAR:
@@ -63,92 +63,92 @@ void MD_PZone::effectSprite(bool bIn, uint8_t id)
     case PAUSE:
       PRINT_STATE("I SPRITE");
 
-      commonPrint();
+      MD_PZone_commonPrint(z);
 
       // move reference column and draw new graphic
-      _nextPos--;
-      for (uint8_t i = 0; i < _spriteInWidth; i++)
+      z->_nextPos--;
+      for (uint8_t i = 0; i < z->_spriteInWidth; i++)
       {
-        if ((_nextPos + i) <= ZONE_END_COL(_zoneEnd) && (_nextPos + i) >= ZONE_START_COL(_zoneStart))
-          _MX->setColumn(_nextPos + i, DATA_BAR(pgm_read_byte(_spriteInData + (_posOffset * _spriteInWidth) + i)));
+        if ((z->_nextPos + i) <= ZONE_END_COL(z->_zoneEnd) && (z->_nextPos + i) >= ZONE_START_COL(z->_zoneStart))
+          MD_MAX72XX_setColumn2(z->_MX,z->_nextPos + i, DATA_BAR(pgm_read_byte(z->_spriteInData + (z->_posOffset * z->_spriteInWidth) + i)));
       }
 
       // blank out the part of the display we don't need
       // this is the part to the right of the sprite
-      for (int16_t i = _nextPos - 1; i >= _endPos; i--)
-        _MX->setColumn(i, EMPTY_BAR);
+      for (int16_t i = z->_nextPos - 1; i >= z->_endPos; i--)
+        MD_MAX72XX_setColumn2(z->_MX,i, EMPTY_BAR);
 
       // advance the animation frame
-      _posOffset++;
-      if (_posOffset >= _spriteInFrames)
-        _posOffset = 0;
+      z->_posOffset++;
+      if (z->_posOffset >= z->_spriteInFrames)
+          z->_posOffset = 0;
 
       // check if we have finished
-      if (_nextPos == ZONE_START_COL(_zoneStart) - _spriteInWidth - 1)
-        _fsmState = PAUSE;
+      if (z->_nextPos == ZONE_START_COL(z->_zoneStart) - z->_spriteInWidth - 1)
+          z->_fsmState = PAUSE;
       break;
 
     default:
       PRINT_STATE("I SPRITE");
-      _fsmState = PAUSE;
+      z->_fsmState = PAUSE;
     }
   }
   else  // exiting - sprite moves left to right in the zone
   {
-    switch (_fsmState)
+    switch (z->_fsmState)
     {
     case PAUSE:
     case INITIALISE:
       PRINT_STATE("O SPRITE");
-      setInitialEffectConditions();
-      if (_startPos < _endPos)
+      MD_PZone_setInitialEffectConditions(z);
+      if (z->_startPos < z->_endPos)
       {
-        int16_t t = _startPos;
-        _startPos = _endPos;
-        _endPos = t;
+        int16_t t = z->_startPos;
+        z->_startPos = z->_endPos;
+        z->_endPos = t;
       }
-      if (_spriteOutData == nullptr)
+      if (z->_spriteOutData == NULL)
       {
-        _fsmState = END;
+        z->_fsmState = END;
         break;
       }
-      _nextPos = ZONE_START_COL(_zoneStart) - 1;
-      _posOffset = 0;
-      _fsmState = PUT_CHAR;
+      z->_nextPos = ZONE_START_COL(z->_zoneStart) - 1;
+      z->_posOffset = 0;
+      z->_fsmState = PUT_CHAR;
       // fall through to next state
 
     case GET_FIRST_CHAR:
     case GET_NEXT_CHAR:
     case PUT_CHAR:
       PRINT_STATE("O SPRITE");
-      commonPrint();
+      MD_PZone_commonPrint(z);
 
       // move reference column and draw new graphic
-      _nextPos++;
-      for (uint8_t i = 0; i < _spriteOutWidth; i++)
+      z->_nextPos++;
+      for (uint8_t i = 0; i < z->_spriteOutWidth; i++)
       {
-        if ((_nextPos - i) <= ZONE_END_COL(_zoneEnd) && (_nextPos - i) >= ZONE_START_COL(_zoneStart))
-          _MX->setColumn(_nextPos - i, DATA_BAR(pgm_read_byte(_spriteOutData + (_posOffset * _spriteOutWidth) + i)));
+        if ((z->_nextPos - i) <= ZONE_END_COL(z->_zoneEnd) && (z->_nextPos - i) >= ZONE_START_COL(z->_zoneStart))
+          MD_MAX72XX_setColumn2(z->_MX,z->_nextPos - i, DATA_BAR(pgm_read_byte(z->_spriteOutData + (z->_posOffset * z->_spriteOutWidth) + i)));
       }
 
       // blank out the part of the display we don't need
       // this is the part to the right of the sprite
-      for (int16_t i = _nextPos - _spriteOutWidth; i >= _endPos; i--)
-        _MX->setColumn(i, EMPTY_BAR);
+      for (int16_t i = z->_nextPos - z->_spriteOutWidth; i >= z->_endPos; i--)
+        MD_MAX72XX_setColumn2(z->_MX,i, EMPTY_BAR);
 
       // advance the animation frame
-      _posOffset++;
-      if (_posOffset >= _spriteOutFrames)
-        _posOffset = 0;
+      z->_posOffset++;
+      if (z->_posOffset >= z->_spriteOutFrames)
+          z->_posOffset = 0;
 
       // check if we have finished
-      if (_nextPos == ZONE_END_COL(_zoneEnd) + _spriteOutWidth + 1)
-        _fsmState = END;
+      if (z->_nextPos == ZONE_END_COL(z->_zoneEnd) + z->_spriteOutWidth + 1)
+          z->_fsmState = END;
       break;
 
     default:
       PRINT_STATE("O SPRITE");
-      _fsmState = END;
+      z->_fsmState = END;
       break;
     }
   }

@@ -19,9 +19,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
  */
+#include <stdlib.h>
 
 #include <MD_Parola.h>
 #include <MD_Parola_lib.h>
+
+#define random1(X)      (random()%X)
+
 /**
  * \file
  * \brief Implements random effect
@@ -31,13 +35,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 #define RAND_CYCLE 11  // random effect repeats every RANDOM_CYCLE columns
 
-void MD_PZone::effectRandom(bool bIn)
+void MD_PZone_effectRandom(MD_PZone_t *z,bool bIn)
 // Text enters as random dots
 {
   static uint8_t pix[RAND_CYCLE];  // pixel data (one byte per column) to mask the display
   uint8_t c, r;   // the row and column coordinates being considered
 
-switch (_fsmState)
+switch (z->_fsmState)
 {
   case INITIALISE:    // Entry bIn == true
   case PAUSE:         // Exit  bIn == false
@@ -45,7 +49,7 @@ switch (_fsmState)
     for (uint8_t i = 0; i < RAND_CYCLE; i++)
       pix[i] = 0;
 
-    _fsmState = PUT_CHAR;
+    z->_fsmState = PUT_CHAR;
     // fall through to next state
 
   case GET_FIRST_CHAR:
@@ -56,34 +60,34 @@ switch (_fsmState)
 
     // Work out and set the next random pixel in the column mask.
     // Use a loop counter to make sure we just don't loop forever.
-    _nextPos = 0;
+    z->_nextPos = 0;
     do
     {
-      c = random(RAND_CYCLE);
-      r = random(ROW_SIZE);
-      _nextPos++;
-    } while (pix[c] & (1 << r) && _nextPos < 5000);
+      c = random1(RAND_CYCLE);
+      r = random1(ROW_SIZE);
+      z->_nextPos++;
+    } while (pix[c] & (1 << r) && z->_nextPos < 5000);
 
     // FSMPRINT("\n [r,c]=", r); FSMPRINT(",", c); FSMPRINT(" counter ", _nextPos);
 
     pix[c] |= (1 << r); // set the r,c location in the mask
 
     // set up a new display
-    commonPrint();
+    MD_PZone_commonPrint(z);
 
     // now mask each column by the pixel mask - this repeats every RAND_CYCLE columns, but the
     // characters don't occupy every pixel so the effect looks 'random' across the whole display.
-    _nextPos = 0;
-    for (uint8_t c = ZONE_START_COL(_zoneStart); c <= ZONE_END_COL(_zoneEnd); c++)
+    z->_nextPos = 0;
+    for (uint8_t cc = ZONE_START_COL(z->_zoneStart); cc <= ZONE_END_COL(z->_zoneEnd); cc++)
     {
-      uint8_t col = _MX->getColumn(c);
+      uint8_t col = MD_MAX72XX_getColumn1(z->_MX,cc);
 
-      col &= (bIn ? pix[_nextPos] : ~pix[_nextPos]);  // set or reset the bit (depends on bIn)
-      _MX->setColumn(c, col);
+      col &= (bIn ? pix[z->_nextPos] : ~pix[z->_nextPos]);  // set or reset the bit (depends on bIn)
+      MD_MAX72XX_setColumn2(z->_MX,cc, col);
 
-      _nextPos++;
-      if (_nextPos == RAND_CYCLE)
-        _nextPos = 0;
+      z->_nextPos++;
+      if (z->_nextPos == RAND_CYCLE)
+        z->_nextPos = 0;
     }
 
     // check if we have finished. This is when all the columns have pixels all on (0xff)
@@ -93,13 +97,13 @@ switch (_fsmState)
       for (uint8_t i = 0; bEnd && i < COL_SIZE; i++)
         bEnd = (pix[i] == 0xff);
 
-      if (bEnd) _fsmState = (bIn ? PAUSE : END);
+      if (bEnd) z->_fsmState = (bIn ? PAUSE : END);
       }
     break;
 
   default:
     PRINT_STATE("IO RAND");
-    _fsmState = (bIn ? PAUSE : END);
+    z->_fsmState = (bIn ? PAUSE : END);
   }
 }
 

@@ -29,18 +29,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
 #if ENA_SCR_DIA
 
-void MD_PZone::effectDiag(bool bUp, bool bLeft, bool bIn)
+void MD_PZone_effectDiag(MD_PZone_t *z,bool bUp, bool bLeft, bool bIn)
 // Scroll the display diagonally up or down, left or right, depending on the selected effect
 {
   if (bIn)  // incoming
   {
-    switch (_fsmState)
+    switch (z->_fsmState)
     {
     case INITIALISE:
       PRINT_STATE("I DIAG");
-      _nextPos = COL_SIZE - 1;   // the position in the animation
-      _MX->control(_zoneStart, _zoneEnd, MD_MAX72XX::WRAPAROUND, MD_MAX72XX::OFF);
-      _fsmState = PUT_CHAR;
+      z->_nextPos = COL_SIZE - 1;   // the position in the animation
+      MD_MAX72XX_control2(z->_MX,z->_zoneStart, z->_zoneEnd, WRAPAROUND, OFF);
+      z->_fsmState = PUT_CHAR;
       // fall through to next state
 
     case GET_FIRST_CHAR:
@@ -49,8 +49,8 @@ void MD_PZone::effectDiag(bool bUp, bool bLeft, bool bIn)
     case PAUSE:
       PRINT_STATE("I DIAG");
 
-      zoneClear();
-      commonPrint();
+      MD_PZone_zoneClear(z);
+      MD_PZone_commonPrint(z);
 
       // scroll each column of the display so that the message appears to be animated
       // Note: Directions are reversed here because we start with the message in the
@@ -58,55 +58,55 @@ void MD_PZone::effectDiag(bool bUp, bool bLeft, bool bIn)
       // need to scroll it UP, and vice versa.
       if (bLeft)
       {
-        for (int16_t j = _nextPos; j <= ZONE_END_COL(_zoneEnd); j++)   // for each column
+        for (int16_t j = z->_nextPos; j <= ZONE_END_COL(z->_zoneEnd); j++)   // for each column
         {
-          uint8_t c = _MX->getColumn(j);
+          uint8_t c = MD_MAX72XX_getColumn1(z->_MX,j);
 
-          for (int8_t i = _nextPos; i > 0; i--)
+          for (int8_t i = z->_nextPos; i > 0; i--)
           {
             c = (bUp ? c << 1 : c >> 1);
-            if (_inverted) c |= (bUp ? 0x01 : 0x80);
+            if (z->_inverted) c |= (bUp ? 0x01 : 0x80);
           }
 
-          _MX->setColumn(j - _nextPos, c);
+          MD_MAX72XX_setColumn2(z->_MX,j - z->_nextPos, c);
         }
       }
       else  // going right
       {
-        for (int16_t j = ZONE_END_COL(_zoneEnd) - _nextPos + 1; j >= ZONE_START_COL(_zoneStart); j--)   // for each column
+        for (int16_t j = ZONE_END_COL(z->_zoneEnd) - z->_nextPos + 1; j >= ZONE_START_COL(z->_zoneStart); j--)   // for each column
         {
-          uint8_t c = _MX->getColumn(j);
+          uint8_t c = MD_MAX72XX_getColumn1(z->_MX,j);
 
-          for (int8_t i = _nextPos; i > 0; i--)
+          for (int8_t i = z->_nextPos; i > 0; i--)
           {
             c = (bUp ? c << 1 : c >> 1);
-            if (_inverted) c |= (bUp ? 0x01 : 0x80);
+            if (z->_inverted) c |= (bUp ? 0x01 : 0x80);
           }
 
-          _MX->setColumn(j + _nextPos, c);
+          MD_MAX72XX_setColumn2(z->_MX,j + z->_nextPos, c);
         }
       }
 
       // check if we have finished
-      if (_nextPos == 0) _fsmState = PAUSE;
+      if (z->_nextPos == 0) z->_fsmState = PAUSE;
 
-      _nextPos--;
+      z->_nextPos--;
       break;
 
     default:
       PRINT_STATE("I DIAG");
-      _fsmState = PAUSE;
+      z->_fsmState = PAUSE;
     }
   }
   else  // exiting
   {
-    switch (_fsmState)
+    switch (z->_fsmState)
     {
     case PAUSE:
     case INITIALISE:
       PRINT_STATE("O DIAG");
-      _nextPos = 0;
-      _fsmState = PUT_CHAR;
+      z->_nextPos = 0;
+      z->_fsmState = PUT_CHAR;
       // fall through to next state
 
     case GET_FIRST_CHAR:
@@ -116,38 +116,38 @@ void MD_PZone::effectDiag(bool bUp, bool bLeft, bool bIn)
 
       if (bLeft)
       {
-        for (int16_t j = ZONE_END_COL(_zoneEnd) - 1; j >= ZONE_START_COL(_zoneStart); j--)   // for each column
+        for (int16_t j = ZONE_END_COL(z->_zoneEnd) - 1; j >= ZONE_START_COL(z->_zoneStart); j--)   // for each column
         {
-          uint8_t c = _MX->getColumn(j);
+          uint8_t c = MD_MAX72XX_getColumn1(z->_MX,j);
 
           c = (bUp ? c >> 1 : c << 1);
-          if (_inverted) c |= (bUp ? 0x80 : 0x01);
+          if (z->_inverted) c |= (bUp ? 0x80 : 0x01);
 
-          _MX->setColumn(j + 1, c);
+          MD_MAX72XX_setColumn2(z->_MX,j + 1, c);
         }
       }
       else    // going right
       {
-        for (int16_t j = ZONE_START_COL(_zoneStart) + 1; j <= ZONE_END_COL(_zoneEnd); j++)   // for each column
+        for (int16_t j = ZONE_START_COL(z->_zoneStart) + 1; j <= ZONE_END_COL(z->_zoneEnd); j++)   // for each column
         {
-          uint8_t c = _MX->getColumn(j);
+          uint8_t c = MD_MAX72XX_getColumn1(z->_MX,j);
 
           c = (bUp ? c >> 1 : c << 1);
-          if (_inverted) c |= (bUp ? 0x80 : 0x01);
+          if (z->_inverted) c |= (bUp ? 0x80 : 0x01);
 
-          _MX->setColumn(j - 1, c);
+          MD_MAX72XX_setColumn2(z->_MX,j - 1, c);
         }
       }
-     _MX->setColumn((bLeft ? ZONE_START_COL(_zoneStart) : ZONE_END_COL(_zoneEnd)), EMPTY_BAR);  // fill in the end
+      MD_MAX72XX_setColumn2(z->_MX,(bLeft ? ZONE_START_COL(z->_zoneStart) : ZONE_END_COL(z->_zoneEnd)), EMPTY_BAR);  // fill in the end
       // check if we have finished
-      if (_nextPos == COL_SIZE - 1) _fsmState = END;
+      if (z->_nextPos == COL_SIZE - 1) z->_fsmState = END;
 
-      _nextPos++;
+      z->_nextPos++;
       break;
 
     default:
       PRINT_STATE("O DIAG");
-      _fsmState = END;
+      z->_fsmState = END;
       break;
     }
   }
